@@ -142,6 +142,7 @@ tbody tr:hover{background:#F6F8FF}
     <button class="btn ghost small" id="tokGo">Usa questo token</button>
     <p class="hint">Il token viene salvato solo in questo browser: non dovrai più accedere finché non premi Esci.</p>
   </details>
+  <p class="hint" style="margin-top:24px"><a href="privacy.html">Informativa privacy</a></p>
 </section>
 
 <!-- APP -->
@@ -373,6 +374,7 @@ function showErr(e){
   if(e.code===10)m='Meta ha negato il permesso: il brand non risulta abilitato al Creator Marketplace o manca un\'autorizzazione. Dettaglio: '+m;
   if(e.code===100)m='Meta non accetta questa combinazione di filtri. Dettaglio: '+m;
   if(e.code===4||e.code===17||e.code===32)m='Troppe richieste in poco tempo. Aspetta qualche minuto e riprova.';
+  if(/not visible/i.test(m))m='Questo creator non è visibile nel Creator Marketplace, oppure lo username non esiste.';
   el.textContent=m;el.classList.remove('hidden');
 }
 async function search(more){
@@ -390,7 +392,7 @@ async function search(more){
     S.after=j.paging&&j.paging.next?j.paging.cursors.after:null;
     renderResults();
     enrich(fresh);
-  }catch(e){showErr(e);if(!more)renderResults()}
+  }catch(e){showErr(e);if(!more){$('results').innerHTML='';$('resTitle').textContent='Risultati';$('more').classList.add('hidden')}}
   finally{btn.disabled=false;btn.textContent=old}
 }
 $('go').onclick=()=>search(false);
