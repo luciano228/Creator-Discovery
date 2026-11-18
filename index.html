@@ -148,6 +148,17 @@ tbody tr:hover{background:var(--w04)}
 .sim{display:flex;align-items:center;gap:8px;background:var(--w02);border:1px solid var(--w10);border-radius:99px;padding:4px 14px 4px 4px;font-size:12px}
 .sim:hover{border-color:var(--w30)}
 .sim .av{width:28px;height:28px;font-size:11px}
+.rail .seg{display:flex}
+.rail .seg button{flex:1;padding:6px 8px;font-size:12px}
+.pick{position:relative;border:1px solid var(--w10);border-radius:8px;background:var(--w02);padding:5px 6px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.pick:focus-within{border-color:var(--w30)}
+.pick .pk-chips{display:contents}
+.pick input[type=text]{flex:1;min-width:90px;border:0!important;background:none!important;padding:3px 4px!important;outline:0;width:auto!important}
+.pk-chip{background:#fff;color:#000;border:0;border-radius:99px;padding:3px 10px;font-size:12px}
+.pk-list{position:absolute;left:-1px;right:-1px;top:calc(100% + 4px);z-index:5;background:#161616;border:1px solid var(--w20);border-radius:8px;max-height:220px;overflow:auto;padding:4px}
+.pk-list button{display:block;width:100%;text-align:left;background:none;border:0;color:#fff;padding:7px 9px;border-radius:6px;font-size:13px}
+.pk-list button:hover,.pk-list button:first-child{background:var(--w10)}
+.pk-list p{margin:0;padding:8px 9px;color:var(--w45);font-size:12px}
 </style>
 </head>
 <body>
@@ -181,30 +192,21 @@ tbody tr:hover{background:var(--w04)}
   <aside class="rail" id="rail">
     <h3>Creator</h3>
     <label class="f"><span>Parole chiave</span><input type="text" id="q" placeholder="es. skincare, running, cucina"></label>
+    <div class="f"><span>Genere</span><div class="seg" id="cGender"><button type="button" data-v="" aria-pressed="true">Tutti</button><button type="button" data-v="female" aria-pressed="false">Donna</button><button type="button" data-v="male" aria-pressed="false">Uomo</button></div></div>
+    <div class="f"><span>Età (anche più fasce)</span><div class="chips" id="cAge"></div></div>
     <div class="two">
-      <label class="f"><span>Genere</span><select id="cGender"><option value="">Tutti</option><option value="female">Donna</option><option value="male">Uomo</option></select></label>
-      <label class="f"><span>Età</span><select id="cAge"></select></label>
+      <label class="f"><span>Follower da</span><select id="fMin"></select></label>
+      <label class="f"><span>Follower fino a</span><select id="fMax"></select></label>
     </div>
-    <div class="two">
-      <label class="f"><span>Follower da</span><input type="text" id="fMin" inputmode="numeric" placeholder="es. 20000"></label>
-      <label class="f"><span>Follower fino a</span><input type="text" id="fMax" inputmode="numeric" placeholder="es. 100000"></label>
-    </div>
-    <div class="two">
-      <label class="f"><span>Paese</span><input type="text" id="cCountries" value="IT"></label>
-      <label class="f"><span>Regione</span><select id="cState"><option value="">Tutte</option></select></label>
-    </div>
+    <div class="f"><span>Paese</span><div id="cCountries"></div></div>
     <div class="f"><span>Interessi (massimo 5)</span><div class="chips" id="interests"></div></div>
 
     <h3>Pubblico del creator</h3>
-    <div class="two">
-      <label class="f"><span>Genere prevalente</span><select id="aGender"><option value="">Tutti</option><option value="female">Donne</option><option value="male">Uomini</option></select></label>
-      <label class="f"><span>Età prevalente</span><select id="aAge"></select></label>
-    </div>
-    <div class="two">
-      <label class="f"><span>Paese</span><input type="text" id="aCountries" placeholder="es. IT"></label>
-      <label class="f"><span>Città</span><input type="text" id="aCity" placeholder="es. Torino"></label>
-    </div>
-    <p class="hint">Genere, età e paese filtrano la ricerca di Meta. La città tiene solo i creator che la hanno tra le città principali del pubblico.</p>
+    <div class="f"><span>Genere prevalente</span><div class="seg" id="aGender"><button type="button" data-v="" aria-pressed="true">Tutti</button><button type="button" data-v="female" aria-pressed="false">Donne</button><button type="button" data-v="male" aria-pressed="false">Uomini</button></div></div>
+    <div class="f"><span>Età prevalente (anche più fasce)</span><div class="chips" id="aAge"></div></div>
+    <div class="f"><span>Paese prevalente</span><div id="aCountries"></div></div>
+    <div class="f"><span>Città tra le principali</span><div id="aCity"></div></div>
+    <p class="hint">Genere, età e paese sono filtri di Meta. La città si applica ai risultati caricati: restano i creator che la hanno tra le città principali del pubblico.</p>
 
     <details class="morefilters">
       <summary>Altri filtri</summary>
@@ -224,7 +226,7 @@ tbody tr:hover{background:var(--w04)}
         <label class="f"><span>Account coinvolti da</span><select id="eMin"></select></label>
         <label class="f"><span>fino a</span><select id="eMax"></select></label>
       </div>
-      <label class="f"><span>Lingue (codici, es. it, en)</span><input type="text" id="cLang"></label>
+      <div class="f"><span>Lingua dei contenuti</span><div id="cLang"></div></div>
       <label class="f"><span>Crescita follower (30 giorni)</span>
         <select id="growth"><option value="">Qualsiasi</option><option value="top_10_percent">Top 10%</option><option value="top_30_percent">Top 30%</option><option value="top_50_percent">Top 50%</option></select></label>
       <label class="f"><span>Ha pubblicato negli ultimi</span>
@@ -276,36 +278,48 @@ tbody tr:hover{background:var(--w04)}
 
 <script>
 /* ---------- configurazione ---------- */
-const APP_ID = '1780971736532990';
-const API = 'https://graph.facebook.com/v27.0';
-const SCOPES = ['instagram_creator_marketplace_discovery','instagram_basic','pages_show_list','pages_manage_metadata','business_management'];
-const STATUSES = ['Da valutare','Da contattare','Contattato','In trattativa','Confermato','Scartato'];
-const INTERESTS = {ANIMALS_AND_PETS:'Animali',BOOKS_AND_LITERATURE:'Libri',BUSINESS_FINANCE_AND_ECONOMICS:'Business e finanza',EDUCATION_AND_LEARNING:'Formazione',BEAUTY:'Beauty',FASHION:'Moda',FITNESS_AND_WORKOUTS:'Fitness',FOOD_AND_DRINK:'Food',GAMES_PUZZLES_AND_PLAY:'Giochi',HISTORY_AND_PHILOSOPHY:'Storia e filosofia',HOLIDAYS_AND_CELEBRATIONS:'Feste',HOME_AND_GARDEN:'Casa e giardino',MUSIC_AND_AUDIO:'Musica',PERFORMING_ARTS:'Spettacolo',SCIENCE_AND_TECH:'Scienza e tech',SPORTS:'Sport',TV_AND_MOVIES:'TV e cinema',TRAVEL_AND_LEISURE_ACTIVITIES:'Viaggi',VEHICLES_AND_TRANSPORTATION:'Motori',VISUAL_ARTS_ARCHITECTURE_AND_CRAFTS:'Arte e design'};
-const AGES = {'18_to_24':'18-24','25_to_34':'25-34','35_to_44':'35-44','45_to_54':'45-54','55_to_64':'55-64','65_and_above':'65+'};
-const F_MIN=[0,10000,25000,50000,75000,100000,250000,1000000], F_MAX=[10000,25000,50000,75000,100000,250000,1000000];
-const E_MIN=[0,2000,10000,50000,100000], E_MAX=[2000,10000,50000,100000];
+const APP_ID='1780971736532990';
+const API='https://graph.facebook.com/v27.0';
+const SCOPES=['instagram_creator_marketplace_discovery','instagram_basic','pages_show_list','pages_manage_metadata','business_management'];
+const STATUSES=['Da valutare','Da contattare','Contattato','In trattativa','Confermato','Scartato'];
+const INTERESTS={ANIMALS_AND_PETS:'Animali',BOOKS_AND_LITERATURE:'Libri',BUSINESS_FINANCE_AND_ECONOMICS:'Business e finanza',EDUCATION_AND_LEARNING:'Formazione',BEAUTY:'Beauty',FASHION:'Moda',FITNESS_AND_WORKOUTS:'Fitness',FOOD_AND_DRINK:'Food',GAMES_PUZZLES_AND_PLAY:'Giochi',HISTORY_AND_PHILOSOPHY:'Storia e filosofia',HOLIDAYS_AND_CELEBRATIONS:'Feste',HOME_AND_GARDEN:'Casa e giardino',MUSIC_AND_AUDIO:'Musica',PERFORMING_ARTS:'Spettacolo',SCIENCE_AND_TECH:'Scienza e tech',SPORTS:'Sport',TV_AND_MOVIES:'TV e cinema',TRAVEL_AND_LEISURE_ACTIVITIES:'Viaggi',VEHICLES_AND_TRANSPORTATION:'Motori',VISUAL_ARTS_ARCHITECTURE_AND_CRAFTS:'Arte e design'};
+const AGES={'18_to_24':'18-24','25_to_34':'25-34','35_to_44':'35-44','45_to_54':'45-54','55_to_64':'55-64','65_and_above':'65+'};
+const F_MIN=[10000,25000,50000,75000,100000,250000,1000000], F_MAX=[10000,25000,50000,75000,100000,250000,1000000];
+const E_MIN=[2000,10000,50000,100000], E_MAX=[2000,10000,50000,100000];
+// Lingue e paesi accettati da Meta (elenchi restituiti dall'API).
+const LANGS={ar:'Arabo',as:'Assamese',bn:'Bengalese',zh:'Cinese',ko:'Coreano',fr:'Francese',ja:'Giapponese',gu:'Gujarati',hi:'Hindi',id:'Indonesiano',en:'Inglese',kn:'Kannada',ml:'Malayalam',mr:'Marathi',or:'Odia',nl:'Olandese',pt:'Portoghese',pa:'Punjabi',es:'Spagnolo',ta:'Tamil',de:'Tedesco',te:'Telugu',tr:'Turco',ur:'Urdu'};
+const CC='AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW'.split(' ');
+const CITIES='Agrigento,Alessandria,Ancona,Aosta,Arezzo,Ascoli Piceno,Asti,Avellino,Bari,Barletta,Belluno,Benevento,Bergamo,Biella,Bologna,Bolzano,Brescia,Brindisi,Cagliari,Caltanissetta,Campobasso,Caserta,Catania,Catanzaro,Chieti,Como,Cosenza,Cremona,Crotone,Cuneo,Enna,Fermo,Ferrara,Firenze|Florence,Foggia,Forlì,Frosinone,Genova|Genoa,Gorizia,Grosseto,Imperia,Isernia,La Spezia,L\'Aquila,Latina,Lecce,Lecco,Livorno,Lodi,Lucca,Macerata,Mantova|Mantua,Massa,Matera,Messina,Milano|Milan,Modena,Monza,Napoli|Naples,Novara,Nuoro,Oristano,Padova|Padua,Palermo,Parma,Pavia,Perugia,Pesaro,Pescara,Piacenza,Pisa,Pistoia,Pordenone,Potenza,Prato,Ragusa,Ravenna,Reggio Calabria,Reggio Emilia,Rieti,Rimini,Roma|Rome,Rovigo,Salerno,Sassari,Savona,Siena,Siracusa|Syracuse,Sondrio,Taranto,Teramo,Terni,Torino|Turin,Trapani,Trento,Treviso,Trieste,Udine,Varese,Venezia|Venice,Verbania,Vercelli,Verona,Vibo Valentia,Vicenza,Viterbo'.split(',');
 const LIST_FIELDS='id,username,country,biography,is_account_verified,badges,email,portfolio_url,profile_picture_url,onboarded_status,gender,age_bucket,category';
-const MIN_FIELDS='id,username,country,biography';
+const MO='.period(overall).time_range(this_month)', ENG='insights.metrics(creator_engaged_accounts)'+MO;
+// Una sola chiamata restituisce profilo, metriche e pubblico di ogni creator.
+const FULL_FIELDS=LIST_FIELDS+',insights.metrics(total_followers).period(overall).time_range(lifetime).as(i_f),insights.metrics(reels_interaction_rate,reels_hook_rate).period(overall).time_range(last_90_days).as(i_r),insights.metrics(creator_engaged_accounts,creator_reach,total_views,account_interactions)'+MO+'.as(i_o),'+ENG+'.breakdown(top_cities).as(i_ci),'+ENG+'.breakdown(top_countries).as(i_co),'+ENG+'.breakdown(gender).as(i_g),'+ENG+'.breakdown(age).as(i_a),insights.metrics(total_views,account_interactions)'+MO+'.breakdown(follow_type).as(i_ft),insights.metrics(total_views)'+MO+'.breakdown(media_type).as(i_mt)';
 const MEDIA_SUB='{id,media_type,product_type,caption,creation_time,permalink,thumbnail_url,likes,comments,views,shares}';
 
-/* ---------- stato ---------- */
-const S={token:null,ig:null,page:null,rows:[],after:null,lastParams:null,metrics:new Map(),aud:new Map(),city:'',cityLabel:'',sort:{k:null,d:-1},selInt:new Set()};
+/* ---------- stato e utilità ---------- */
+const S={token:null,ig:null,page:null,rows:[],after:null,lastParams:null,sort:{k:null,d:-1},city:null,cur:null};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
 const nf=new Intl.NumberFormat('it-IT',{notation:'compact',maximumFractionDigits:1});
 const fmtN=v=>v==null||isNaN(v)?'—':nf.format(v);
-// I tassi possono arrivare come frazione (0.02) o percentuale (2): sotto 1 li tratto come frazione.
-const fmtP=v=>v==null||isNaN(v)?'—':((v<=1?v*100:v).toFixed(1).replace('.',',')+'%');
+const fmtP=v=>v==null||isNaN(v)?'—':Number(v).toFixed(1).replace('.',',')+'%';
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let saved=store.get('tcd_saved',{});
+const REGION=(()=>{try{return new Intl.DisplayNames(['it'],{type:'region'})}catch(e){return null}})();
+const countryName=k=>{if(REGION&&/^[A-Z]{2}$/.test(k||'')){try{return REGION.of(k)||k}catch(e){}}return k||''};
+const isMock=r=>/^mocked_username/.test((r&&r.username)||'');
 
 /* ---------- API ---------- */
 async function api(path,params={}){
   const u=new URL(API+'/'+path);
   for(const[k,v]of Object.entries(params))if(v!==''&&v!=null)u.searchParams.set(k,v);
   u.searchParams.set('access_token',S.token);
+  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),45000);
   let j;
-  try{j=await (await fetch(u)).json()}catch(e){throw {message:'Connessione a Meta non riuscita. Controlla la rete e riprova.'}}
+  try{j=await (await fetch(u,{signal:ctl.signal})).json()}
+  catch(e){throw {message:e.name==='AbortError'?'Meta non ha risposto in tempo. Riprova.':'Connessione a Meta non riuscita. Controlla la rete e riprova.'}}
+  finally{clearTimeout(timer)}
   if(j.error){
     if(j.error.code===190){logout();showLoginErr('La sessione è scaduta. Accedi di nuovo.')}
     throw j.error;
@@ -320,7 +334,7 @@ $('fbLogin').onclick=()=>{
   const redirect=location.origin+location.pathname;
   location.href='https://www.facebook.com/v27.0/dialog/oauth?client_id='+APP_ID+'&redirect_uri='+encodeURIComponent(redirect)+'&response_type=token&scope='+SCOPES.join(',');
 };
-$('tokGo').onclick=()=>{const t=$('tokIn').value.trim();if(t)startWithToken(t,true)};
+$('tokGo').onclick=()=>{const t=$('tokIn').value.trim();if(t)startWithToken(t)};
 $('logout').onclick=()=>logout();
 function logout(){
   S.token=null;try{localStorage.removeItem('tcd_s')}catch(e){}
@@ -331,15 +345,13 @@ async function startWithToken(tok){
   $('loginErr').classList.add('hidden');
   S.token=tok;
   try{
-    let page=null;
     try{
       const acc=await api('me/accounts',{fields:'name,access_token,instagram_business_account',limit:100});
-      page=(acc.data||[]).find(p=>p.instagram_business_account);
+      const page=(acc.data||[]).find(p=>p.instagram_business_account);
       if(!page)throw {message:'Nessuna Pagina con un account Instagram collegato tra quelle autorizzate.'};
       S.token=page.access_token;S.page=page.name;S.ig=page.instagram_business_account.id;
     }catch(e){
       if(e.message&&e.message.startsWith('Nessuna'))throw e;
-      // probabilmente è già un token di Pagina
       const me=await api('me',{fields:'name,instagram_business_account'});
       if(!me.instagram_business_account)throw {message:'Questo token non ha accesso a un account Instagram business.'};
       S.page=me.name;S.ig=me.instagram_business_account.id;
@@ -359,41 +371,80 @@ function enter(){
   try{const s=JSON.parse(localStorage.getItem('tcd_s'));if(s&&s.t){S.token=s.t;S.ig=s.ig;S.page=s.p;enter()}}catch(e){}
 })();
 
-/* ---------- filtri ---------- */
-function fillSel(id,vals,first,fmt){$(id).innerHTML='<option value="">'+first+'</option>'+vals.map(v=>'<option value="'+v+'">'+fmt(v)+'</option>').join('')}
-const REGIONI={'IT-65':'Abruzzo','IT-77':'Basilicata','IT-78':'Calabria','IT-72':'Campania','IT-45':'Emilia-Romagna','IT-36':'Friuli-Venezia Giulia','IT-62':'Lazio','IT-42':'Liguria','IT-25':'Lombardia','IT-57':'Marche','IT-67':'Molise','IT-21':'Piemonte','IT-75':'Puglia','IT-88':'Sardegna','IT-82':'Sicilia','IT-52':'Toscana','IT-32':'Trentino-Alto Adige','IT-55':'Umbria','IT-23':"Valle d'Aosta",'IT-34':'Veneto'};
-$('cState').innerHTML+=Object.entries(REGIONI).map(([k,n])=>'<option value="'+k+'">'+n+'</option>').join('');
-// Meta accetta solo alcune soglie di follower: uso la soglia più vicina e rifinisco sui dati caricati.
-const num=id=>{const n=parseInt(String($(id).value).replace(/\D/g,''),10);return isNaN(n)?null:n};
-const apiMin=n=>n==null?'':Math.max(...F_MIN.filter(x=>x<=n));
-const apiMax=n=>n==null?'':(F_MAX.find(x=>x>=n)||'');
-fillSel('eMin',E_MIN,'Nessun minimo',fmtN);fillSel('eMax',E_MAX,'Nessun massimo',fmtN);
-fillSel('cAge',Object.keys(AGES),'Tutte',k=>AGES[k]);fillSel('aAge',Object.keys(AGES),'Tutte',k=>AGES[k]);
-$('interests').innerHTML=Object.entries(INTERESTS).map(([k,v])=>'<button type="button" class="chip" aria-pressed="false" data-k="'+k+'">'+v+'</button>').join('');
-$('interests').onclick=e=>{
-  const b=e.target.closest('.chip');if(!b)return;const k=b.dataset.k;
-  if(S.selInt.has(k))S.selInt.delete(k);else if(S.selInt.size<5)S.selInt.add(k);else return;
-  b.setAttribute('aria-pressed',S.selInt.has(k));
+/* ---------- controlli dei filtri: solo scelte guidate ---------- */
+function fillSel(id,vals,first){$(id).innerHTML='<option value="">'+first+'</option>'+vals.map(v=>'<option value="'+v+'">'+fmtN(v)+'</option>').join('')}
+fillSel('fMin',F_MIN,'Nessun minimo');fillSel('fMax',F_MAX,'Nessun massimo');
+fillSel('eMin',E_MIN,'Nessun minimo');fillSel('eMax',E_MAX,'Nessun massimo');
+function chipsInit(id,map,max){
+  const el=$(id);
+  el.innerHTML=Object.entries(map).map(([k,v])=>'<button type="button" class="chip" aria-pressed="false" data-k="'+k+'">'+v+'</button>').join('');
+  el.onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const on=b.getAttribute('aria-pressed')==='true';
+    if(!on&&max&&el.querySelectorAll('[aria-pressed=true]').length>=max)return;b.setAttribute('aria-pressed',!on)};
+}
+const chipsVal=id=>[...$(id).querySelectorAll('[aria-pressed=true]')].map(b=>b.dataset.k);
+const chipsClear=id=>$(id).querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+chipsInit('interests',INTERESTS,5);chipsInit('cAge',AGES);chipsInit('aAge',AGES);
+function segInit(id){const el=$(id);el.onclick=e=>{const b=e.target.closest('button');if(b)el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b))}}
+const segVal=id=>$(id).querySelector('[aria-pressed=true]').dataset.v;
+const segClear=id=>$(id).querySelectorAll('button').forEach((x,i)=>x.setAttribute('aria-pressed',i===0));
+segInit('cGender');segInit('aGender');
+// Campo con ricerca: si sceglie dall'elenco, non si scrive un valore libero.
+function picker(id,opts,cfg){
+  const el=$(id);el.className='pick';
+  el.innerHTML='<div class="pk-chips"></div><input type="text" autocomplete="off" placeholder="'+esc(cfg.ph)+'"><div class="pk-list hidden"></div>';
+  const inp=el.querySelector('input'),list=el.querySelector('.pk-list'),chips=el.querySelector('.pk-chips');let sel=[];
+  const label=v=>(opts.find(o=>o.v===v)||{l:v}).l;
+  const draw=()=>{chips.innerHTML=sel.map(v=>'<button type="button" class="pk-chip" data-v="'+esc(v)+'" title="Rimuovi">'+esc(label(v))+' ×</button>').join('');
+    inp.classList.toggle('hidden',sel.length>=(cfg.max||1))};
+  const show=()=>{const q=norm(inp.value);const m=opts.filter(o=>!sel.includes(o.v)&&(!q||o.s.includes(q))).slice(0,60);
+    list.innerHTML=m.length?m.map(o=>'<button type="button" data-v="'+esc(o.v)+'">'+esc(o.l)+'</button>').join(''):'<p>Nessun risultato</p>';list.classList.remove('hidden')};
+  const add=v=>{if(sel.length<(cfg.max||1))sel.push(v);inp.value='';list.classList.add('hidden');draw()};
+  inp.onfocus=show;inp.oninput=show;
+  inp.onkeydown=e=>{
+    if(e.key==='Enter'){e.preventDefault();e.stopPropagation();const b=list.querySelector('button');if(b&&!list.classList.contains('hidden'))add(b.dataset.v)}
+    else if(e.key==='Escape'){e.stopPropagation();list.classList.add('hidden')}
+    else if(e.key==='Backspace'&&!inp.value&&sel.length){sel.pop();draw()}
+  };
+  list.onmousedown=e=>{const b=e.target.closest('button');if(b){e.preventDefault();add(b.dataset.v)}};
+  inp.onblur=()=>setTimeout(()=>{list.classList.add('hidden');inp.value=''},150);
+  chips.onclick=e=>{const b=e.target.closest('.pk-chip');if(b){sel=sel.filter(v=>v!==b.dataset.v);draw()}};
+  draw();
+  return {get:()=>sel.slice(),set:a=>{sel=a.slice();draw()}};
+}
+const COUNTRY_OPTS=CC.map(c=>({v:c,l:countryName(c)})).map(o=>({...o,s:norm(o.l)+' '+o.v.toLowerCase()})).sort((a,b)=>a.l.localeCompare(b.l,'it'));
+const CITY_OPTS=CITIES.map(x=>{const [it,en]=x.split('|');return {v:it,l:it,s:norm(it)+(en?' '+norm(en):''),keys:[norm(it)].concat(en?[norm(en)]:[])}});
+const LANG_OPTS=Object.entries(LANGS).map(([v,l])=>({v,l,s:norm(l)+' '+v}));
+const P={
+  cc:picker('cCountries',COUNTRY_OPTS,{ph:'Cerca un paese',max:5}),
+  ac:picker('aCountries',COUNTRY_OPTS,{ph:'Cerca un paese',max:5}),
+  city:picker('aCity',CITY_OPTS,{ph:'Cerca una città',max:1}),
+  lang:picker('cLang',LANG_OPTS,{ph:'Cerca una lingua',max:5})
 };
-const list=id=>$(id).value.split(',').map(s=>s.trim()).filter(Boolean);
+P.cc.set(['IT']);
 const arr=a=>a.length?JSON.stringify(a):'';
+const handles=id=>$(id).value.split(/[\s,]+/).map(s=>s.trim().replace(/^@/,'')).filter(Boolean);
 function buildParams(){
-  const user=$('username').value.trim().replace(/^@/,'');
-  if(user)return {username:user};            // l'username non si combina con altri filtri
-  const sim=list('similar').map(s=>s.replace(/^@/,'')).slice(0,5);
+  const user=handles('username')[0];
+  if(user){if(!/^[A-Za-z0-9._]+$/.test(user))throw {message:'Lo username può contenere solo lettere, numeri, punti e trattini bassi.'};return {username:user}}
+  const sim=handles('similar').slice(0,5);
+  const bad=sim.find(s=>!/^[A-Za-z0-9._]+$/.test(s));
+  if(bad)throw {message:'"'+bad+'" non è uno username valido.'};
+  const fMin=$('fMin').value,fMax=$('fMax').value,eMin=$('eMin').value,eMax=$('eMax').value;
+  if(fMin&&fMax&&Number(fMin)>=Number(fMax))throw {message:'Il minimo di follower deve essere più basso del massimo.'};
+  if(eMin&&eMax&&Number(eMin)>=Number(eMax))throw {message:'Il minimo di account coinvolti deve essere più basso del massimo.'};
+  const cg=segVal('cGender'),ag=segVal('aGender');
   const p={
-    query:sim.length?'':$('q').value.trim(),  // "simili a" non si combina con le parole chiave
+    query:sim.length?'':$('q').value.trim(),   // "simili a" non si combina con le parole chiave
     similar_to_creators:arr(sim),
     recommendation_type:$('rec').value,
-    creator_countries:arr($('cState').value?['IT']:list('cCountries').map(s=>s.toUpperCase())),
-    creator_states:$('cState').value?arr([$('cState').value]):'',
-    creator_min_followers:apiMin(num('fMin')), creator_max_followers:apiMax(num('fMax')),
-    creator_min_engaged_accounts:$('eMin').value, creator_max_engaged_accounts:$('eMax').value,
-    creator_age_bucket:$('cAge').value, creator_gender:$('cGender').value,
-    creator_language:arr(list('cLang').map(s=>s.toLowerCase())),
-    creator_interests:arr([...S.selInt]),
-    major_audience_countries:arr(list('aCountries').map(s=>s.toUpperCase())),
-    major_audience_age_bucket:$('aAge').value, major_audience_gender:$('aGender').value,
+    creator_countries:arr(P.cc.get()),
+    creator_min_followers:fMin, creator_max_followers:fMax,
+    creator_min_engaged_accounts:eMin, creator_max_engaged_accounts:eMax,
+    creator_age_bucket:arr(chipsVal('cAge')), creator_gender:cg?arr([cg]):'',
+    creator_language:arr(P.lang.get()),
+    creator_interests:arr(chipsVal('interests')),
+    major_audience_countries:arr(P.ac.get()),
+    major_audience_age_bucket:arr(chipsVal('aAge')), major_audience_gender:ag?arr([ag]):'',
     creator_follower_growth:$('growth').value, creator_latest_post_activity:$('recent').value
   };
   if($('bEmail').checked)p.has_public_contact_email='true';
@@ -401,157 +452,142 @@ function buildParams(){
   if($('bVerified').checked)p.verified_account='true';
   if($('bAds').checked)p.featured_in_paid_ads='true';
   if($('bNoMsg').checked)p.exclude_messaged_creators='true';
+  for(const k of Object.keys(p))if(p[k]===''||p[k]==null)delete p[k];
   return p;
 }
 $('reset').onclick=()=>{
   document.querySelectorAll('#rail input[type=text]').forEach(i=>i.value='');
   document.querySelectorAll('#rail select').forEach(s=>s.value='');
   document.querySelectorAll('#rail input[type=checkbox]').forEach(c=>c.checked=false);
-  S.selInt.clear();document.querySelectorAll('#interests .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
+  ['interests','cAge','aAge'].forEach(chipsClear);segClear('cGender');segClear('aGender');
+  P.cc.set([]);P.ac.set([]);P.city.set([]);P.lang.set([]);
 };
 $('rail').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT')$('go').click()});
+
+/* ---------- lettura dei dati di Meta ---------- */
+function bdList(tv){
+  const b=tv&&tv.breakdowns,o=Array.isArray(b)?b[0]:b;
+  return ((o&&o.results)||[]).map(r=>({k:String(r.dimension_value!=null?r.dimension_value:(r.dimension_values||[]).join(' ')),v:Number(r.percentage!=null?r.percentage:r.value)||0})).sort((a,b)=>b.v-a.v);
+}
+function parseIns(ins){
+  const out={};
+  for(const d of (ins&&ins.data)||[]){
+    const tv=d.total_value||{};
+    if(tv.value!=null)out[d.name]=tv.value;
+    const l=bdList(tv);if(l.length)out[d.name+'__bd']=l;
+    if(Array.isArray(d.values))out[d.name+'__day']=d.values.slice().sort((a,b)=>(Date.parse(a.end_time)||0)-(Date.parse(b.end_time)||0)).map(x=>Number(x.value)||0);
+  }
+  return out;
+}
+function metricsOf(r){
+  const K='creator_engaged_accounts__bd',f=parseIns(r.i_f),rr=parseIns(r.i_r),o=parseIns(r.i_o),ft=parseIns(r.i_ft),mt=parseIns(r.i_mt);
+  const g=parseIns(r.i_g)[K]||[],fe=g.find(i=>/^f/i.test(i.k)),ma=g.find(i=>/^m/i.test(i.k)),gt=(fe?fe.v:0)+(ma?ma.v:0);
+  const age=parseIns(r.i_a)[K]||[];
+  const m={followers:f.total_followers,ir:rr.reels_interaction_rate,hook:rr.reels_hook_rate,eng:o.creator_engaged_accounts,reach:o.creator_reach,views:o.total_views,inter:o.account_interactions,
+    cities:parseIns(r.i_ci)[K]||[],countries:parseIns(r.i_co)[K]||[],fem:gt?(fe?fe.v:0)/gt*100:null,age,topAge:age.length?age[0].k:null,
+    ftV:ft.total_views__bd||[],ftI:ft.account_interactions__bd||[],mt:mt.total_views__bd||[]};
+  ['i_f','i_r','i_o','i_ci','i_co','i_g','i_a','i_ft','i_mt'].forEach(k=>delete r[k]);
+  return m;
+}
+const M=r=>(r&&r._m)||{};
+function cityPct(r){
+  if(!S.city)return null;
+  const hit=(M(r).cities||[]).find(i=>{const n=norm(i.k),c0=norm(i.k.split(',')[0]);return S.city.keys.some(k=>c0===k||n.startsWith(k+' ')||n.startsWith(k+','))});
+  return hit?hit.v:null;
+}
+function visibleRows(){
+  if(!S.city)return S.rows;
+  return S.rows.filter(r=>isMock(r)||!(M(r).cities||[]).length||cityPct(r)!=null);
+}
 
 /* ---------- ricerca ---------- */
 function showErr(e){
   const el=$('err');if(!e){el.classList.add('hidden');return}
-  let m=e.message||'Errore sconosciuto.';
-  if(e.code===10)m='Meta ha negato il permesso: il brand non risulta abilitato al Creator Marketplace o manca un\'autorizzazione. Dettaglio: '+m;
-  if(e.code===100)m='Meta non accetta questa combinazione di filtri. Dettaglio: '+m;
-  if(e.code===4||e.code===17||e.code===32)m='Troppe richieste in poco tempo. Aspetta qualche minuto e riprova.';
-  if(/not visible/i.test(m))m='Questo creator non è visibile nel Creator Marketplace, oppure lo username non esiste.';
+  let m=String(e.message||'Errore sconosciuto.');
+  if(e.code===210||/not visible/i.test(m))m='Questo creator non è visibile nel Creator Marketplace, oppure lo username non esiste. Con i dati di prova la ricerca per username non è disponibile.';
+  else if(/Invalid IG Username/i.test(m))m='Uno degli username indicati in "Simili a" non è valido o non è iscritto al Creator Marketplace.';
+  else if(e.code===10)m='Meta ha negato il permesso: il brand non risulta abilitato al Creator Marketplace o manca un\'autorizzazione.';
+  else if(e.code===4||e.code===17||e.code===32||e.code===613)m='Troppe richieste in poco tempo. Aspetta qualche minuto e riprova.';
+  else if(e.code===100)m='Meta ha rifiutato la ricerca: '+m.replace(/^\(#100\)\s*/,'').slice(0,220);
   el.textContent=m;el.classList.remove('hidden');
+}
+// Se Meta chiede un elenco dove abbiamo mandato un valore singolo, correggo e riprovo.
+async function fetchPage(p,extra){
+  for(let i=0;i<6;i++){
+    try{return await creators({...p,...extra,fields:FULL_FIELDS})}
+    catch(e){
+      const msg=String(e.message||''),m=/param (\w+) must be an array/.exec(msg);
+      if(m&&p[m[1]]!=null&&String(p[m[1]]).charAt(0)!=='['){p[m[1]]=JSON.stringify([p[m[1]]]);continue}
+      if(e.code===100&&/insight|breakdown|metric/i.test(msg))return await creators({...p,...extra,fields:LIST_FIELDS});
+      throw e;
+    }
+  }
+  throw {message:'Ricerca non riuscita.'};
 }
 async function search(more){
   showErr(null);
   const btn=more?$('more'):$('go');btn.disabled=true;const old=btn.textContent;btn.textContent='Cerco…';
   try{
-    if(!more){S.lastParams=buildParams();S.cityLabel=$('aCity').value.trim();S.city=normCity(S.cityLabel);S.cityRaw=S.cityLabel.toLowerCase();S.fMin=num('fMin');S.fMax=num('fMax');S.rows=[];S.after=null;S.sort={k:null,d:-1}}
-    const p={...S.lastParams,limit:25};if(more&&S.after)p.after=S.after;
-    let j;
-    const run=q=>creators({...q,fields:LIST_FIELDS}).catch(e=>{if(e.code===100)return creators({...q,fields:MIN_FIELDS});throw e});
-    try{j=await run(p)}
-    catch(e){
-      // Il formato del codice regione non è documentato: se "IT-21" non passa, riprovo con "21".
-      if(e.code===100&&p.creator_states&&p.creator_states.includes('IT-')){p.creator_states=p.creator_states.replace('IT-','');S.lastParams.creator_states=p.creator_states;j=await run(p)}
-      else throw e;
+    if(!more){
+      S.lastParams=buildParams();S.rows=[];S.after=null;S.sort={k:null,d:-1};
+      const c=P.city.get()[0],o=c&&CITY_OPTS.find(x=>x.v===c);S.city=o?{label:o.l,keys:o.keys}:null;
+      $('results').innerHTML='<div class="empty"><span class="spin"></span> Cerco i creator…</div>';
     }
+    const extra={limit:25};if(more&&S.after)extra.after=S.after;
+    const j=await fetchPage(S.lastParams,extra);
     const seen=new Set(S.rows.map(r=>r.id));
-    const fresh=(j.data||[]).filter(r=>!seen.has(r.id));
-    S.rows.push(...fresh);
-    S.after=j.paging&&j.paging.next?j.paging.cursors.after:null;
+    for(const r of j.data||[]){if(seen.has(r.id))continue;r._m=metricsOf(r);S.rows.push(r)}
+    S.after=j.paging&&j.paging.next&&j.paging.cursors?j.paging.cursors.after:null;
     renderResults();
-    enrich(fresh);
-  }catch(e){showErr(e);if(!more){$('results').innerHTML='';$('resTitle').textContent='Risultati';$('more').classList.add('hidden')}}
+  }catch(e){showErr(e);if(!more){S.rows=[];$('results').innerHTML='';$('resTitle').textContent='Risultati';$('more').classList.add('hidden');$('csvRes').disabled=true}}
   finally{btn.disabled=false;btn.textContent=old}
 }
 $('go').onclick=()=>search(false);
 $('more').onclick=()=>search(true);
 
-/* ---------- metriche per riga ---------- */
-function readInsights(ins){
-  const out={};
-  for(const d of (ins&&ins.data)||[]){
-    const tv=d.total_value||{};
-    if(tv.value!=null)out[d.name]=tv.value; else if(d.values&&d.values.length)out[d.name]=d.values[d.values.length-1].value;
-    const b=tv.breakdowns&&tv.breakdowns[0];
-    if(b&&b.results)out[d.name+'__bd']=b.results.map(r=>({k:(r.dimension_values||[]).join(' '),v:r.value})).sort((a,b)=>b.v-a.v);
-  }
-  return out;
-}
-async function insightCall(username,expr){
-  try{const j=await creators({username,fields:'insights.'+expr});return readInsights(j.data&&j.data[0]&&j.data[0].insights)}catch(e){return {}}
-}
-async function loadMetrics(u){
-  if(S.metrics.has(u))return S.metrics.get(u);
-  const [a,b]=await Promise.all([
-    insightCall(u,'metrics(total_followers).period(overall).time_range(lifetime)'),
-    insightCall(u,'metrics(reels_interaction_rate,reels_hook_rate).period(overall).time_range(last_90_days)')
-  ]);
-  const m={followers:a.total_followers,ir:b.reels_interaction_rate,hook:b.reels_hook_rate};
-  S.metrics.set(u,m);return m;
-}
-const CITY_ALIAS={roma:'rome',milano:'milan',torino:'turin',napoli:'naples',firenze:'florence',venezia:'venice',genova:'genoa',padova:'padua'};
-const normCity=s=>{s=String(s||'').trim().toLowerCase();return CITY_ALIAS[s]||s};
-async function loadCities(u){
-  if(S.aud.has(u))return S.aud.get(u);
-  const x=await insightCall(u,'metrics(creator_engaged_accounts).period(overall).time_range(this_month).breakdown(top_cities)');
-  const list=x.creator_engaged_accounts__bd||[];S.aud.set(u,list);return list;
-}
-// Posizione della città cercata tra le città principali del pubblico (1 = la prima).
-function cityPct(u){
-  const list=S.aud.get(u);if(!list||!list.length||!S.city)return null;
-  const idx=list.findIndex(i=>{const k=i.k.toLowerCase(),c0=k.split(',')[0].trim();return k.includes(S.city)||k.includes(S.cityRaw)||(c0&&(S.city.includes(c0)||S.cityRaw.includes(c0)))});
-  return idx<0?null:-(idx+1);
-}
-const cityTxt=u=>{const p=cityPct(u);return p==null?'—':(-p)+'ª città'};
-function visibleRows(){return S.rows.filter(r=>{
-  const m=S.metrics.get(r.username);
-  if(m&&m.followers!=null){if(S.fMin!=null&&m.followers<S.fMin)return false;if(S.fMax!=null&&m.followers>S.fMax)return false}
-  if(!S.city)return true;const l=S.aud.get(r.username);return !l||!l.length||cityPct(r.username)!=null})}
-async function enrich(rows){
-  const q=rows.filter(r=>r.username&&(!S.metrics.has(r.username)||(S.city&&!S.aud.has(r.username))));
-  if(!q.length){renderResults();return}
-  let done=0;const st=$('enrichState'),total=q.length;
-  const tick=()=>{st.innerHTML=done<total?'<span class="spin"></span> Carico i dati '+done+'/'+total:''};
-  tick();
-  const worker=async()=>{while(q.length){const r=q.shift();await loadMetrics(r.username);if(S.city)await loadCities(r.username);done++;paintMetrics(r.username);tick()}};
-  await Promise.all(Array.from({length:Math.min(4,total)},worker));
-  st.textContent='';renderResults();
-}
-function paintMetrics(u){
-  const m=S.metrics.get(u)||{};
-  document.querySelectorAll('tr[data-u="'+CSS.escape(u)+'"]').forEach(tr=>{
-    tr.querySelector('.mF').textContent=fmtN(m.followers);
-    tr.querySelector('.mI').textContent=fmtP(m.ir);
-    tr.querySelector('.mH').textContent=fmtP(m.hook);
-    const c=tr.querySelector('.mC');if(c)c.textContent=cityTxt(u);
-  });
-}
-
 /* ---------- tabella ---------- */
-function avatar(r,cls){
-  const ini=esc((r.username||r.page_name||'?').slice(0,1).toUpperCase());
-  return r.profile_picture_url?'<img class="av '+(cls||'')+'" src="'+esc(r.profile_picture_url)+'" alt="" loading="lazy" onerror="this.outerHTML=\'<span class=av>'+ini+'</span>\'">':'<span class="av">'+ini+'</span>';
+function avatar(r){
+  const ini=esc(((r&&(r.username||r.page_name))||'?').slice(0,1).toUpperCase());
+  return r&&r.profile_picture_url?'<img class="av" src="'+esc(r.profile_picture_url)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=\'<span class=av>'+ini+'</span>\'">':'<span class="av">'+ini+'</span>';
 }
 const badges=r=>(Array.isArray(r.badges)?r.badges:[]).map(b=>'<span class="bdg">'+esc(typeof b==='string'?b:(b.name||b.type||''))+'</span>').join('');
-function rowHtml(r){
-  const m=S.metrics.get(r.username)||{};const sv=saved[r.username];
-  return '<tr data-u="'+esc(r.username)+'" tabindex="0">'+
-    '<td><div class="cr">'+avatar(r)+'<div style="min-width:0"><b>'+esc(r.username||r.page_name||r.id)+(r.is_account_verified?'<span class="ver">verificato</span>':'')+'</b><small>'+esc(r.biography||'')+'</small></div></div></td>'+
-    '<td class="hide-s">'+esc(r.country||'—')+'</td>'+
-    '<td class="num mF">'+fmtN(m.followers)+'</td>'+
-    '<td class="num mI">'+fmtP(m.ir)+'</td>'+
-    '<td class="num mH">'+fmtP(m.hook)+'</td>'+
-    (S.city?'<td class="num mC">'+cityTxt(r.username)+'</td>':'')+
-    '<td class="hide-s">'+badges(r)+'</td>'+
-    '<td><button class="btn ghost small" data-save="'+esc(r.username)+'">'+(sv?'Salvato':'Salva')+'</button></td></tr>';
-}
+const sortVal=(r,k)=>{const v=k==='city'?cityPct(r):M(r)[k];return v==null?-Infinity:v};
 function sorted(rows){
   const {k,d}=S.sort.k?S.sort:(S.city?{k:'city',d:-1}:S.sort);if(!k)return rows;
-  const val=r=>{const v=k==='city'?cityPct(r.username):(S.metrics.get(r.username)||{})[k];return v==null?-Infinity:v};
-  return [...rows].sort((a,b)=>(val(a)-val(b))*d);
+  return [...rows].sort((a,b)=>(sortVal(a,k)-sortVal(b,k))*d);
+}
+function rowHtml(r){
+  const m=M(r),sv=saved[r.username];
+  return '<tr data-id="'+esc(r.id)+'" tabindex="0">'+
+    '<td><div class="cr">'+avatar(r)+'<div style="min-width:0"><b>'+esc(r.username||r.page_name||r.id)+(r.is_account_verified?'<span class="ver">verificato</span>':'')+'</b><small>'+esc(r.biography||'')+'</small></div></div></td>'+
+    '<td class="hide-s">'+esc(r.country||'—')+'</td>'+
+    '<td class="num">'+fmtN(m.followers)+'</td><td class="num">'+fmtP(m.ir)+'</td><td class="num hide-s">'+fmtP(m.hook)+'</td>'+
+    '<td class="num">'+(m.fem==null?'—':Math.round(m.fem)+'%')+'</td><td class="num hide-s">'+esc(m.topAge||'—')+'</td>'+
+    (S.city?'<td class="num">'+fmtP(cityPct(r))+'</td>':'')+
+    '<td><button class="btn ghost small" data-save="'+esc(r.id)+'">'+(sv?'Salvato':'Salva')+'</button></td></tr>';
 }
 function tableHtml(rows){
-  const th=(k,l)=>'<th class="num"><button data-sort="'+k+'">'+l+(S.sort.k===k?(S.sort.d<0?' ▼':' ▲'):'')+'</button></th>';
-  return '<table><thead><tr><th>Creator</th><th class="hide-s">Paese</th>'+th('followers','Follower')+th('ir','Interazione reel')+th('hook','Hook rate')+(S.city?th('city',esc(S.cityLabel)+' nel pubblico'):'')+'<th class="hide-s">Badge</th><th></th></tr></thead><tbody>'+rows.map(rowHtml).join('')+'</tbody></table>';
+  const th=(k,l,c)=>'<th class="num'+(c||'')+'"><button data-sort="'+k+'">'+l+(S.sort.k===k?(S.sort.d<0?' ▼':' ▲'):'')+'</button></th>';
+  return '<table><thead><tr><th>Creator</th><th class="hide-s">Paese</th>'+th('followers','Follower')+th('ir','Interazione reel')+th('hook','Hook',' hide-s')+th('fem','Pubblico donne')+'<th class="num hide-s">Età principale</th>'+(S.city?th('city','Pubblico a '+esc(S.city.label)):'')+'<th></th></tr></thead><tbody>'+rows.map(rowHtml).join('')+'</tbody></table>';
 }
 function renderResults(){
-  const rows=visibleRows(),n=rows.length;
+  const rows=visibleRows(),n=rows.length,mock=S.rows.some(isMock);
   $('resTitle').textContent=S.rows.length?n+' creator':'Risultati';
-  $('mockNote').classList.toggle('hidden',!S.rows.some(r=>/^mocked_username/.test(r.username||'')));
-  $('results').innerHTML=n?tableHtml(sorted(rows)):'<div class="empty">Nessun creator con questi filtri. Prova ad allargare paese, città o follower.</div>';
+  $('mockNote').classList.toggle('hidden',!mock);
+  $('mockNote').textContent='Questi sono dati di prova di Meta: nomi, numeri e città sono casuali'+(S.city?', quindi il filtro per città non viene applicato':'')+'. I creator reali compaiono dopo l\'approvazione dell\'app review.';
+  $('results').innerHTML=n?tableHtml(sorted(rows)):'<div class="empty">'+(S.rows.length?'Nessuno dei '+S.rows.length+' creator caricati ha '+esc(S.city.label)+' tra le città principali. Premi "Carica altri" o togli la città.':'Nessun creator con questi filtri. Prova ad allargare paese, età o follower.')+'</div>';
   $('more').classList.toggle('hidden',!S.after);
   $('csvRes').disabled=!n;
 }
-function onTableClick(e,rows){
+const rowById=id=>S.rows.find(r=>String(r.id)===String(id));
+$('results').onclick=e=>{
   const s=e.target.closest('[data-sort]');
   if(s){const k=s.dataset.sort;S.sort=S.sort.k===k?{k,d:-S.sort.d}:{k,d:-1};renderResults();return}
   const b=e.target.closest('[data-save]');
-  if(b){const u=b.dataset.save;toggleSave(rows.find(r=>r.username===u));b.textContent=saved[u]?'Salvato':'Salva';return}
-  const tr=e.target.closest('tr[data-u]');if(tr)openDrawer(rows.find(r=>r.username===tr.dataset.u));
-}
-$('results').onclick=e=>onTableClick(e,S.rows);
-$('results').onkeydown=e=>{if(e.key==='Enter'&&e.target.matches('tr[data-u]'))openDrawer(S.rows.find(r=>r.username===e.target.dataset.u))};
+  if(b){const r=rowById(b.dataset.save);toggleSave(r);b.textContent=r&&saved[r.username]?'Salvato':'Salva';return}
+  const tr=e.target.closest('tr[data-id]');if(tr)openDrawer(rowById(tr.dataset.id));
+};
+$('results').onkeydown=e=>{if(e.key==='Enter'&&e.target.matches('tr[data-id]'))openDrawer(rowById(e.target.dataset.id))};
 
 /* ---------- salvati ---------- */
 function persist(){store.set('tcd_saved',saved);renderSavedCount()}
@@ -559,18 +595,19 @@ function renderSavedCount(){const n=Object.keys(saved).length;$('savedCount').te
 function toggleSave(r){
   if(!r||!r.username)return;
   if(saved[r.username])delete saved[r.username];
-  else{const m=S.metrics.get(r.username)||{};saved[r.username]={username:r.username,country:r.country||'',biography:r.biography||'',email:r.email||'',profile_picture_url:r.profile_picture_url||'',followers:m.followers??null,ir:m.ir??null,hook:m.hook??null,status:STATUSES[0],note:'',at:new Date().toISOString().slice(0,10)}}
+  else saved[r.username]={username:r.username,country:r.country||'',biography:r.biography||'',email:r.email||'',portfolio_url:r.portfolio_url||'',profile_picture_url:r.profile_picture_url||'',is_account_verified:!!r.is_account_verified,category:r.category||'',gender:r.gender||'',age_bucket:r.age_bucket||'',badges:r.badges||[],_m:M(r),status:STATUSES[0],note:'',at:new Date().toISOString().slice(0,10)};
   persist();
 }
+const savedM=r=>r._m||{followers:r.followers,ir:r.ir,hook:r.hook};
 $('savedFilter').innerHTML+=STATUSES.map(s=>'<option>'+s+'</option>').join('');
 $('savedFilter').onchange=renderSaved;
 function renderSaved(){
   const f=$('savedFilter').value;const rows=Object.values(saved).filter(r=>!f||r.status===f);
   $('savedList').innerHTML=rows.length?'<table><thead><tr><th>Creator</th><th class="num">Follower</th><th class="num hide-s">Interazione reel</th><th>Stato</th><th class="hide-s">Nota</th><th class="hide-s">Email</th></tr></thead><tbody>'+rows.map(r=>
-    '<tr data-u="'+esc(r.username)+'" tabindex="0"><td><div class="cr">'+avatar(r)+'<div><b>'+esc(r.username)+'</b><small>'+esc(r.country)+'</small></div></div></td><td class="num">'+fmtN(r.followers)+'</td><td class="num hide-s">'+fmtP(r.ir)+'</td><td>'+esc(r.status)+'</td><td class="hide-s"><small>'+esc(r.note)+'</small></td><td class="hide-s">'+esc(r.email||'—')+'</td></tr>').join('')+'</tbody></table>'
+    '<tr data-u="'+esc(r.username)+'" tabindex="0"><td><div class="cr">'+avatar(r)+'<div><b>'+esc(r.username)+'</b><small>'+esc(r.country)+'</small></div></div></td><td class="num">'+fmtN(savedM(r).followers)+'</td><td class="num hide-s">'+fmtP(savedM(r).ir)+'</td><td>'+esc(r.status)+'</td><td class="hide-s"><small>'+esc(r.note)+'</small></td><td class="hide-s">'+esc(r.email||'—')+'</td></tr>').join('')+'</tbody></table>'
     :'<div class="empty">Nessun creator salvato'+(f?' con questo stato':'')+'. Dalla ricerca premi "Salva" accanto a un creator.</div>';
 }
-$('savedList').onclick=e=>{const tr=e.target.closest('tr[data-u]');if(tr)openDrawer(saved[tr.dataset.u])};
+$('savedList').onclick=e=>{const tr=e.target.closest('tr[data-u]');if(tr){const r=saved[tr.dataset.u];if(r){r._m=savedM(r);openDrawer(r)}}};
 
 /* ---------- viste ---------- */
 $('tabs').onclick=e=>{
@@ -590,37 +627,31 @@ function csv(rows,cols){
 function download(name,text){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
-const pct=v=>v==null?'':(v<=1?v*100:v).toFixed(2).replace('.',',');
-$('csvRes').onclick=()=>download('creator-ricerca.csv',csv(sorted(visibleRows()),[
-  ['Username',r=>r.username],['Paese',r=>r.country],['Follower',r=>(S.metrics.get(r.username)||{}).followers],
-  ['Interazione reel %',r=>pct((S.metrics.get(r.username)||{}).ir)],['Hook rate %',r=>pct((S.metrics.get(r.username)||{}).hook)],
-  ['Email',r=>r.email],['Portfolio',r=>r.portfolio_url],['Verificato',r=>r.is_account_verified?'sì':''],['Profilo',r=>r.username?'https://instagram.com/'+r.username:''],['Bio',r=>r.biography]]));
-$('csvSaved').onclick=()=>download('creator-salvati.csv',csv(Object.values(saved),[
-  ['Username',r=>r.username],['Stato',r=>r.status],['Nota',r=>r.note],['Paese',r=>r.country],['Follower',r=>r.followers],
-  ['Interazione reel %',r=>pct(r.ir)],['Hook rate %',r=>pct(r.hook)],['Email',r=>r.email],['Salvato il',r=>r.at],['Profilo',r=>'https://instagram.com/'+r.username]]));
+const dec=v=>v==null||isNaN(v)?'':Number(v).toFixed(2).replace('.',',');
+const CSV_COLS=[['Username',r=>r.username],['Paese',r=>r.country],['Follower',r=>savedM(r).followers],['Interazione reel %',r=>dec(savedM(r).ir)],['Hook rate %',r=>dec(savedM(r).hook)],
+  ['Pubblico donne %',r=>dec(savedM(r).fem)],['Età principale',r=>savedM(r).topAge],['Città principali',r=>(savedM(r).cities||[]).slice(0,3).map(i=>i.k).join(' | ')],
+  ['Email',r=>r.email],['Portfolio',r=>r.portfolio_url],['Verificato',r=>r.is_account_verified?'sì':''],['Profilo',r=>r.username?'https://instagram.com/'+r.username:''],['Bio',r=>r.biography]];
+$('csvRes').onclick=()=>download('creator-ricerca.csv',csv(sorted(visibleRows()),CSV_COLS));
+$('csvSaved').onclick=()=>download('creator-salvati.csv',csv(Object.values(saved),[['Stato',r=>r.status],['Nota',r=>r.note],['Salvato il',r=>r.at]].concat(CSV_COLS)));
 
 /* ---------- scheda creator ---------- */
-function closeDrawer(){$('drawerHost').innerHTML='';if($('vSaved').classList.contains('hidden')===false)renderSaved()}
+function closeDrawer(){S.cur=null;$('drawerHost').innerHTML='';if(!$('vSaved').classList.contains('hidden'))renderSaved()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
-const REGION=(()=>{try{return new Intl.DisplayNames(['it'],{type:'region'})}catch(e){return null}})();
-const countryName=k=>{if(REGION&&/^[A-Z]{2}$/.test(k)){try{return REGION.of(k)}catch(e){}}return k};
-// Le percentuali sono sul totale degli account coinvolti quando Meta lo fornisce, altrimenti sulla somma delle voci.
-function shares(items,total){
-  if(!items||!items.length)return [];
-  const sum=items.reduce((s,i)=>s+i.v,0),frac=items.every(i=>i.v<=1);
-  const den=frac?1:((total&&total>=sum?total:sum)||1);
-  return items.map(i=>({k:i.k,p:i.v/den*100}));
+const pc=v=>Number(v).toFixed(1).replace('.',',')+'%';
+// mode 'pct': Meta fornisce già la percentuale. mode 'share': quote calcolate sul totale delle voci.
+function bars(title,items,labeler,mode,max){
+  let list=(items||[]).slice(0,max||5);if(!list.length)return '';
+  if(mode==='share'){const t=list.reduce((s,i)=>s+i.v,0)||1;list=list.map(i=>({k:i.k,v:i.v/t*100}))}
+  const top=Math.max(...list.map(i=>i.v))||1;
+  return '<div class="panel"><div class="lbl">'+title+'</div>'+list.map(i=>'<div class="brow"><p><span>'+esc(labeler?labeler(i.k):i.k)+'</span><em>'+pc(i.v)+'</em></p><span class="trk"><i style="width:'+Math.max(1,i.v/top*100)+'%"></i></span></div>').join('')+'</div>';
 }
-function bars(title,items,labeler,total,max){
-  const sh=shares(items,total).slice(0,max||5);if(!sh.length)return '';
-  const top=Math.max(...sh.map(i=>i.p))||1;
-  return '<div class="panel"><div class="lbl">'+title+'</div>'+sh.map(i=>'<div class="brow"><p><span>'+esc(labeler?labeler(i.k):i.k)+'</span><em>'+i.p.toFixed(1).replace('.',',')+'%</em></p><span class="trk"><i style="width:'+Math.max(1,i.p/top*100)+'%"></i></span></div>').join('')+'</div>';
-}
+const FT_L=k=>/non/i.test(k)?'Non follower':'Follower';
+const MT_L=k=>({reels:'Reel',reel:'Reel',story:'Storie',stories:'Storie',post:'Post',posts:'Post',video:'Video',live:'Live'})[String(k).toLowerCase().replace(/_count$/,'')]||k;
 function mediaGrid(title,list,toggle,n){
   const items=(list&&list.data)||[];if(!items.length)return '';
   const kind=m=>/reel|video/i.test((m.product_type||'')+' '+(m.media_type||''))?'reel':'post';
   return '<div class="panel"><div class="phd"><div class="lbl">'+title+'</div>'+(toggle?'<div class="seg" data-seg><button data-k="" aria-pressed="true">Tutti</button><button data-k="reel" aria-pressed="false">Reel</button><button data-k="post" aria-pressed="false">Post</button></div>':'')+'</div><div class="media">'+items.slice(0,n||12).map(m=>
-    '<a data-t="'+kind(m)+'" href="'+esc(m.permalink||m.facebook_permalink||'#')+'" target="_blank" rel="noopener">'+(m.thumbnail_url?'<img src="'+esc(m.thumbnail_url)+'" alt="" loading="lazy">':'')+
+    '<a data-t="'+kind(m)+'" href="'+esc(m.permalink||m.facebook_permalink||'#')+'" target="_blank" rel="noopener">'+(m.thumbnail_url?'<img src="'+esc(m.thumbnail_url)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'')+
     '<span>'+[m.views!=null?fmtN(m.views)+' views':'',m.likes!=null?fmtN(m.likes)+' like':'',m.comments!=null?fmtN(m.comments)+' commenti':''].filter(Boolean).slice(0,2).join(' · ')+'</span></a>').join('')+'</div></div>';
 }
 function lineChart(vals){
@@ -629,85 +660,80 @@ function lineChart(vals){
   const pts=vals.map((x,i)=>(i/(vals.length-1)*W).toFixed(1)+','+(H-4-(x/mx)*(H-12)).toFixed(1)).join(' ');
   return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:120px;display:block"><polyline points="'+pts+'" fill="none" stroke="#fff" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg><p class="bigsub">Picco giornaliero '+fmtN(mx)+'</p>';
 }
-async function seriesCall(u,metric){
-  try{
-    const j=await creators({username:u,fields:'insights.metrics('+metric+').period(day).time_range(this_month)'});
-    const d=j.data&&j.data[0]&&j.data[0].insights&&j.data[0].insights.data&&j.data[0].insights.data[0];
-    return ((d&&d.values)||[]).map(x=>Number(x.value)||0);
-  }catch(e){return []}
-}
-async function openDrawer(r){
-  if(!r)return;const u=r.username;
-  const host=$('drawerHost');
-  host.innerHTML='<div class="scrim" id="scrim"></div><aside class="drawer" role="dialog" aria-label="Scheda creator"><button class="x" id="dx" aria-label="Chiudi">×</button><div id="dBody"><p class="muted"><span class="spin"></span> Carico la scheda…</p></div></aside>';
-  $('scrim').onclick=closeDrawer;$('dx').onclick=closeDrawer;$('dx').focus();
-  const safe=async f=>{try{return await f()}catch(e){return null}};
-  const one=async fields=>{const j=await creators({username:u,fields});return j.data&&j.data[0]};
-  const mo='.period(overall).time_range(this_month)';
-  const base='metrics(creator_engaged_accounts)'+mo;
-  const [prof,m,over,g,a,ag,c,ci,rm,bm,ft,mt,daily,ads,sim]=await Promise.all([
-    safe(()=>one(LIST_FIELDS+',has_brand_partnership_experience,past_brand_partnership_partners,is_creator_following_brand')),
-    loadMetrics(u),
-    insightCall(u,'metrics(creator_engaged_accounts,creator_reach,total_views,account_interactions)'+mo),
-    insightCall(u,base+'.breakdown(gender)'),insightCall(u,base+'.breakdown(age)'),insightCall(u,base+'.breakdown(age,gender)'),
-    insightCall(u,base+'.breakdown(top_countries)'),loadCities(u),
-    safe(()=>one('recent_media.limit(30)'+MEDIA_SUB)),safe(()=>one('branded_content_media'+MEDIA_SUB)),
-    insightCall(u,'metrics(total_views,account_interactions)'+mo+'.breakdown(follow_type)'),
-    insightCall(u,'metrics(total_views)'+mo+'.breakdown(media_type)'),
-    seriesCall(u,'total_views'),
-    safe(()=>one('past_partnership_ads_media{id,permalink,thumbnail_url,caption,creation_time,media_type,product_type}')),
-    safe(()=>creators({similar_to_creators:JSON.stringify([u]),fields:MIN_FIELDS+',profile_picture_url,is_account_verified',limit:8}))
-  ]);
-  if(!$('dBody'))return;
-  const p={...r,...(prof||{})};const sv=saved[u];
-  const partners=Array.isArray(p.past_brand_partnership_partners)?p.past_brand_partnership_partners.map(x=>typeof x==='string'?x:(x.username||x.name||'')).filter(Boolean):[];
-  const K='creator_engaged_accounts__bd',eng=over.creator_engaged_accounts;
-  const isF=k=>/^(f|female)$/i.test(k), isM=k=>/^(m|male)$/i.test(k);
-  const gs=g[K]||[];const gt=gs.reduce((s,i)=>s+i.v,0)||1;
-  const fP=Math.round((gs.find(i=>isF(i.k))||{v:0}).v/gt*100), mP=Math.round((gs.find(i=>isM(i.k))||{v:0}).v/gt*100);
-  const ageMap={};
-  for(const i of ag[K]||[]){const parts=i.k.split(' ');const gk=parts.find(x=>isF(x)||isM(x));const ak=parts.find(x=>/\d/.test(x));if(!gk||!ak)continue;(ageMap[ak]=ageMap[ak]||{f:0,m:0})[isF(gk)?'f':'m']+=i.v}
-  let ageKeys=Object.keys(ageMap);const split=ageKeys.length>0;
-  if(!split){for(const i of a[K]||[])ageMap[i.k]={f:i.v,m:0};ageKeys=Object.keys(ageMap)}
-  ageKeys.sort((x,y)=>parseInt(x)-parseInt(y));
-  const amax=Math.max(1,...ageKeys.map(k=>Math.max(ageMap[k].f,ageMap[k].m)));
-  const atot=ageKeys.reduce((s,k)=>s+ageMap[k].f+ageMap[k].m,0)||1;
-  const agePanel='<div class="panel"><div class="lbl">Età e genere del pubblico</div>'+((gs.length||ageKeys.length)?
-    (gs.length?'<div class="legend"><span style="color:var(--gold)"><i></i>Donne '+fP+'%</span><span style="color:var(--teal)"><i></i>Uomini '+mP+'%</span></div>':'')+
-    (ageKeys.length?'<div class="ages">'+ageKeys.map(k=>'<div><b style="height:'+(ageMap[k].f/amax*100)+'%;background:'+(split?'var(--gold)':'rgba(255,255,255,.7)')+'"></b>'+(split?'<b style="height:'+(ageMap[k].m/amax*100)+'%;background:var(--teal)"></b>':'')+'</div>').join('')+'</div><div class="agel">'+ageKeys.map(k=>'<span>'+esc(k)+'<br>'+Math.round((ageMap[k].f+ageMap[k].m)/atot*100)+'%</span>').join('')+'</div>':'')
+function drawerHtml(r){
+  const m=M(r),u=r.username,sv=saved[u];
+  const ages=(m.age||[]).slice().sort((a,b)=>parseInt(a.k)-parseInt(b.k)),amax=Math.max(1,...ages.map(a=>a.v));
+  const agePanel='<div class="panel"><div class="lbl">Età e genere del pubblico</div>'+((m.fem!=null||ages.length)?
+    (m.fem!=null?'<div class="legend"><span style="color:var(--gold)"><i></i>Donne '+Math.round(m.fem)+'%</span><span style="color:var(--teal)"><i></i>Uomini '+Math.round(100-m.fem)+'%</span></div>':'')+
+    (ages.length?'<div class="ages">'+ages.map(a=>'<div><b style="height:'+(a.v/amax*100)+'%;background:var(--gold)"></b></div>').join('')+'</div><div class="agel">'+ages.map(a=>'<span>'+esc(a.k)+'<br>'+pc(a.v)+'</span>').join('')+'</div>':'')
     :'<p class="muted" style="margin:0">Dati sul pubblico non disponibili per questo creator.</p>')+'</div>';
   const kpi=(l,x)=>'<div class="panel"><div class="lbl">'+l+'</div><p class="kpi">'+x+'</p></div>';
-  const ftRows=(k,lab)=>{const sh=shares(ft[k+'__bd']);return sh.length?'<p class="bigsub" style="margin:0 0 8px;color:#fff">'+lab+'</p>'+sh.map(i=>'<div class="brow"><p><span>'+(/non/i.test(i.k)?'Non follower':'Follower')+'</span><em>'+Math.round(i.p)+'%</em></p><span class="trk"><i style="width:'+Math.max(1,i.p)+'%"></i></span></div>').join(''):''};
-  const ftHtml=ftRows('total_views','Visualizzazioni')+ftRows('account_interactions','Interazioni');
-  const simList=((sim&&sim.data)||[]).filter(x=>x.username&&x.username!==u);const simMap={};simList.forEach(x=>simMap[x.username]=x);
-  const gen=({female:'Donna',male:'Uomo'})[String(p.gender||'').toLowerCase()];
-  $('dBody').innerHTML='<div class="igrid">'+
-    '<div class="panel"><div class="phead">'+avatar(p)+'<div><h2>'+esc(u)+(p.is_account_verified?'<span class="ver">verificato</span>':'')+'</h2><p class="sub">'+[p.category,countryName(p.country||''),gen,AGES[p.age_bucket]?AGES[p.age_bucket]+' anni':''].filter(Boolean).map(esc).join(' · ')+'</p><div>'+badges(p)+'</div></div></div>'+
-      (p.biography?'<p class="muted" style="margin:14px 0 0;max-width:80ch">'+esc(p.biography)+'</p>':'')+
-      '<div class="acts"><a class="btn small" href="https://instagram.com/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">Apri su Instagram</a>'+
-      (p.email?'<button class="btn ghost small" id="cpMail">Copia email</button>':'')+
-      (p.portfolio_url?'<a class="btn ghost small" href="'+esc(p.portfolio_url)+'" target="_blank" rel="noopener">Portfolio</a>':'')+
-      '<button class="btn ghost small" id="dSave">'+(sv?'Rimuovi dai salvati':'Salva')+'</button></div></div>'+
+  const ftRows=(items,lab)=>{if(!items||!items.length)return '';const t=items.reduce((s,i)=>s+i.v,0)||1;return '<p class="bigsub" style="margin:0 0 8px;color:#fff">'+lab+'</p>'+items.map(i=>'<div class="brow"><p><span>'+FT_L(i.k)+'</span><em>'+Math.round(i.v/t*100)+'%</em></p><span class="trk"><i style="width:'+Math.max(1,i.v/t*100)+'%"></i></span></div>').join('')};
+  const ftHtml=ftRows(m.ftV,'Visualizzazioni')+ftRows(m.ftI,'Interazioni');
+  const gen=({female:'Donna',male:'Uomo'})[String(r.gender||'').toLowerCase()];
+  const age=AGES[r.age_bucket]||r.age_bucket;
+  return '<div class="igrid">'+
+    '<div class="panel"><div class="phead">'+avatar(r)+'<div><h2>'+esc(u)+(r.is_account_verified?'<span class="ver">verificato</span>':'')+'</h2><p class="sub">'+[r.category,countryName(r.country||''),gen,age?age+' anni':''].filter(Boolean).map(esc).join(' · ')+'</p><div>'+badges(r)+'</div></div></div>'+
+      (r.biography?'<p class="muted" style="margin:14px 0 0;max-width:80ch">'+esc(r.biography)+'</p>':'')+
+      '<div class="acts"><a class="btn small" href="https://instagram.com/'+encodeURIComponent(u||'')+'" target="_blank" rel="noopener">Apri su Instagram</a>'+
+      (r.email?'<button class="btn ghost small" id="cpMail">Copia email</button>':'')+
+      (r.portfolio_url?'<a class="btn ghost small" href="'+esc(r.portfolio_url)+'" target="_blank" rel="noopener">Portfolio</a>':'')+
+      '<button class="btn ghost small" id="dSave">'+(sv?'Rimuovi dai salvati':'Salva')+'</button></div>'+(r.email?'<p class="bigsub">'+esc(r.email)+'</p>':'')+'</div>'+
     '<div class="g2"><div class="panel"><p class="big">'+fmtP(m.ir)+'</p><p class="bigsub">Tasso di interazione sui reel, ultimi 90 giorni</p><p class="bigsub">Percentuale di hook '+fmtP(m.hook)+'</p></div>'+agePanel+'</div>'+
-    '<div class="gk">'+kpi('Follower',fmtN(m.followers))+kpi('Interazioni, mese',fmtN(over.account_interactions))+kpi('Visualizzazioni, mese',fmtN(over.total_views))+kpi('Account coinvolti',fmtN(eng))+kpi('Copertura',fmtN(over.creator_reach))+'</div>'+
-    '<div class="g2"><div class="panel"><div class="lbl">Visualizzazioni giornaliere, questo mese</div>'+(lineChart(daily)||'<p class="muted" style="margin:0">Andamento giornaliero non disponibile.</p>')+'</div><div class="panel"><div class="lbl">Follower e non follower</div>'+(ftHtml||'<p class="muted" style="margin:0">Dato non disponibile.</p>')+'</div></div>'+
-    '<div class="g3">'+bars('Paesi principali',c[K],countryName,eng)+bars('Città principali',ci,null,eng)+bars('Visualizzazioni per formato',mt.total_views__bd)+'</div>'+
-    (partners.length?'<div class="panel"><div class="lbl">Brand partner precedenti</div>'+partners.map(x=>'<span class="bdg">'+esc(x)+'</span>').join('')+'</div>':'')+
-    mediaGrid('Inserzioni in partnership',ads&&ads.past_partnership_ads_media,false,12)+
-    mediaGrid('Contenuti recenti',rm&&rm.recent_media,true,18)+mediaGrid('Branded content',bm&&bm.branded_content_media,false,12)+
-    (simList.length?'<div class="panel"><div class="lbl">Creator con un pubblico simile</div><div class="sims">'+simList.map(x=>'<button class="sim" data-sim="'+esc(x.username)+'">'+avatar(x)+'<span>'+esc(x.username)+'</span></button>').join('')+'</div></div>':'')+
+    '<div class="gk">'+kpi('Follower',fmtN(m.followers))+kpi('Interazioni, mese',fmtN(m.inter))+kpi('Visualizzazioni, mese',fmtN(m.views))+kpi('Account coinvolti',fmtN(m.eng))+kpi('Copertura',fmtN(m.reach))+'</div>'+
+    '<div class="g3">'+(bars('Paesi principali',m.countries,countryName,'pct')||'')+(bars('Città principali',m.cities,null,'pct')||'')+(bars('Visualizzazioni per formato',m.mt,MT_L,'share')||'')+'</div>'+
+    (ftHtml?'<div class="panel"><div class="lbl">Follower e non follower</div><div class="g2" style="gap:24px"><div>'+ftRows(m.ftV,'Visualizzazioni')+'</div><div>'+ftRows(m.ftI,'Interazioni')+'</div></div></div>':'')+
+    '<div id="dExtra" class="igrid"><p class="muted"><span class="spin"></span> Carico contenuti e collaborazioni…</p></div>'+
     '<div class="panel sl'+(sv?'':' hidden')+'" id="slBox"><div class="lbl">Stato e note</div><select id="slStatus">'+STATUSES.map(x=>'<option'+(sv&&sv.status===x?' selected':'')+'>'+x+'</option>').join('')+'</select><textarea id="slNote" placeholder="Note interne: compenso, idee, contatti">'+esc(sv?sv.note:'')+'</textarea></div>'+
     '</div>';
+}
+function wireDrawer(r,simMap){
+  const u=r.username;
   $('dBody').onclick=e=>{
     const b=e.target.closest('[data-seg] button');
     if(b){const seg=b.parentNode;seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));seg.closest('.panel').querySelectorAll('.media a').forEach(x=>x.classList.toggle('hidden',!!b.dataset.k&&x.dataset.t!==b.dataset.k));return}
-    const si=e.target.closest('[data-sim]');if(si)openDrawer(simMap[si.dataset.sim]);
+    const si=e.target.closest('[data-sim]');if(si&&simMap[si.dataset.sim])openDrawer(simMap[si.dataset.sim]);
   };
-  const mail=$('cpMail');if(mail)mail.onclick=async()=>{try{await navigator.clipboard.writeText(p.email);mail.textContent='Email copiata'}catch(e){}};
-  $('dSave').onclick=()=>{toggleSave(p);const on=!!saved[u];$('dSave').textContent=on?'Rimuovi dai salvati':'Salva';$('slBox').classList.toggle('hidden',!on);
-    document.querySelectorAll('[data-save="'+CSS.escape(u)+'"]').forEach(b=>b.textContent=on?'Salvato':'Salva')};
+  const mail=$('cpMail');if(mail)mail.onclick=async()=>{try{await navigator.clipboard.writeText(r.email);mail.textContent='Email copiata'}catch(e){}};
+  $('dSave').onclick=()=>{toggleSave(r);const on=!!saved[u];$('dSave').textContent=on?'Rimuovi dai salvati':'Salva';$('slBox').classList.toggle('hidden',!on);
+    const row=S.rows.find(x=>x.username===u);if(row)document.querySelectorAll('[data-save="'+CSS.escape(String(row.id))+'"]').forEach(b=>b.textContent=on?'Salvato':'Salva')};
   $('slStatus').onchange=e=>{if(saved[u]){saved[u].status=e.target.value;persist()}};
   $('slNote').oninput=e=>{if(saved[u]){saved[u].note=e.target.value;persist()}};
+}
+async function openDrawer(r){
+  if(!r)return;const u=r.username;S.cur=u;
+  $('drawerHost').innerHTML='<div class="scrim" id="scrim"></div><aside class="drawer" role="dialog" aria-label="Scheda creator"><button class="x" id="dx" aria-label="Chiudi">×</button><div id="dBody"></div></aside>';
+  $('scrim').onclick=closeDrawer;$('dx').onclick=closeDrawer;
+  const simMap={};
+  const paint=()=>{$('dBody').innerHTML=drawerHtml(r);wireDrawer(r,simMap)};
+  paint();$('dx').focus();
+  const alive=()=>S.cur===u&&$('dExtra');
+  const safe=async f=>{try{return await f()}catch(e){return null}};
+  const one=async fields=>{const j=await creators({username:u,fields});return j.data&&j.data[0]};
+  if(!u){$('dExtra').innerHTML='';return}
+  // Scheda aperta dai salvati o senza dati: aggiorno le metriche dal vivo.
+  if(M(r).followers==null||M(r).cities==null){
+    const fresh=await safe(()=>one(FULL_FIELDS));if(!alive())return;
+    if(fresh){const m=metricsOf(fresh);Object.assign(r,fresh,{_m:m});if(saved[u]){Object.assign(saved[u],{_m:m});persist()}paint()}
+  }
+  const [prof,day,rm,bm,ads,sim]=await Promise.all([
+    safe(()=>one('has_brand_partnership_experience,past_brand_partnership_partners')),
+    safe(()=>one('insights.metrics(total_views).period(day).time_range(this_month)')),
+    safe(()=>one('recent_media.limit(30)'+MEDIA_SUB)),safe(()=>one('branded_content_media'+MEDIA_SUB)),
+    safe(()=>one('past_partnership_ads_media{id,permalink,thumbnail_url,caption,creation_time,media_type,product_type}')),
+    safe(()=>creators({similar_to_creators:JSON.stringify([u]),fields:FULL_FIELDS,limit:8}))
+  ]);
+  if(!alive())return;
+  const partners=prof&&Array.isArray(prof.past_brand_partnership_partners)?prof.past_brand_partnership_partners.map(x=>typeof x==='string'?x:(x.username||x.name||'')).filter(Boolean):[];
+  const daily=day&&day.insights?parseIns(day.insights).total_views__day:null;
+  const simList=((sim&&sim.data)||[]).filter(x=>x.username&&x.username!==u);
+  simList.forEach(x=>{x._m=metricsOf(x);simMap[x.username]=x});
+  const html=(daily&&daily.length>1?'<div class="panel"><div class="lbl">Visualizzazioni giornaliere, questo mese</div>'+lineChart(daily)+'</div>':'')+
+    (partners.length?'<div class="panel"><div class="lbl">Brand partner precedenti</div>'+partners.map(x=>'<span class="bdg">'+esc(x)+'</span>').join('')+'</div>':'')+
+    mediaGrid('Inserzioni in partnership',ads&&ads.past_partnership_ads_media,false,12)+
+    mediaGrid('Contenuti recenti',rm&&rm.recent_media,true,18)+mediaGrid('Branded content',bm&&bm.branded_content_media,false,12)+
+    (simList.length?'<div class="panel"><div class="lbl">Creator con un pubblico simile</div><div class="sims">'+simList.map(x=>'<button class="sim" data-sim="'+esc(x.username)+'">'+avatar(x)+'<span>'+esc(x.username)+' · '+fmtN(M(x).followers)+'</span></button>').join('')+'</div></div>':'');
+  $('dExtra').innerHTML=html||'<p class="muted" style="margin:0">'+(isMock(r)?'Contenuti, brand partner, andamento giornaliero e creator simili non sono disponibili con i dati di prova di Meta.':'Nessun contenuto o collaborazione disponibile per questo creator.')+'</p>';
 }
 </script>
 </body>
