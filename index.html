@@ -6,123 +6,144 @@
 <title>Timeless Creator Discovery</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#16203A; --ink2:#55607A; --line:#D5DBE5; --mist:#EEF1F5; --paper:#FFFFFF;
-  --blue:#2B4CFF; --blue-soft:#E4E9FF; --amber:#F2B233; --amber-soft:#FFF3D6; --red:#C8362B; --green:#1E8A5A;
-}
+:root{--bg:#000;--card:#0f0f0f;--side:#0c0c0c;--w02:rgba(255,255,255,.02);--w04:rgba(255,255,255,.04);--w06:rgba(255,255,255,.06);--w10:rgba(255,255,255,.1);--w15:rgba(255,255,255,.15);--w20:rgba(255,255,255,.2);--w30:rgba(255,255,255,.3);--w45:rgba(255,255,255,.45);--w55:rgba(255,255,255,.55);--w70:rgba(255,255,255,.7);--gold:#e8c789;--teal:#5cbdb9}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{font-family:Figtree,system-ui,sans-serif;color:var(--ink);background:var(--mist);font-size:15px;line-height:1.45}
-h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,sans-serif;margin:0;letter-spacing:-.01em}
+body{font-family:Inter,system-ui,sans-serif;font-feature-settings:"ss01","cv11";color:#fff;background:var(--bg);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.02em}
+h1 em,h2 em{font-family:"Playfair Display",serif;font-style:italic;font-weight:500;letter-spacing:0}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--w30);outline-offset:2px}
 .hidden{display:none!important}
+select option{background:#111;color:#fff}
 
-/* top bar */
-.top{display:flex;align-items:center;gap:20px;padding:14px 24px;background:var(--ink);color:#fff}
-.top h1{font-size:20px;font-weight:700}
-.tabs{display:flex;gap:4px;margin-left:12px}
-.tab{background:none;border:0;color:#B9C2D8;padding:8px 14px;border-radius:999px;font-weight:500}
-.tab[aria-selected=true]{background:#fff;color:var(--ink)}
-.top .who{margin-left:auto;font-size:13px;color:#B9C2D8;display:flex;align-items:center;gap:12px}
+.top{display:flex;align-items:center;gap:20px;padding:0 24px;height:62px;border-bottom:1px solid var(--w10)}
+.top h1{font-size:17px}
+.top h1 em{color:var(--w70);margin-left:6px}
+.tabs{display:flex;gap:2px;margin-left:12px;padding:3px;border:1px solid var(--w10);border-radius:99px}
+.tab{background:none;border:0;color:var(--w55);padding:6px 16px;border-radius:99px;font-size:12px}
+.tab[aria-selected=true]{background:#fff;color:#000}
+.top .who{margin-left:auto;font-size:12px;color:var(--w55);display:flex;align-items:center;gap:12px}
 .linkbtn{background:none;border:0;color:inherit;text-decoration:underline;padding:0}
 
-/* login */
-.login{max-width:560px;margin:9vh auto;padding:0 24px}
-.login h2{font-size:44px;line-height:1.05;font-weight:700;margin-bottom:16px}
-.login p{color:var(--ink2);max-width:46ch}
-.btn{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:600}
+.login{max-width:640px;margin:12vh auto;padding:0 24px}
+.login h2{font-size:52px;line-height:1;letter-spacing:-.025em;margin-bottom:20px}
+.login p{color:var(--w55);max-width:52ch;font-size:15px}
+.btn{background:#fff;color:#000;border:1px solid #fff;border-radius:99px;padding:10px 20px;font-weight:500;font-size:13px}
 a.btn{text-decoration:none;display:inline-block}
-.btn:disabled{opacity:.5;cursor:default}
-.btn.ghost{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
-.btn.small{padding:6px 11px;font-size:13px;border-radius:8px}
-details.adv{margin-top:28px;color:var(--ink2);font-size:14px}
-details.adv textarea{width:100%;height:70px;margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--paper)}
+.btn:hover{background:rgba(255,255,255,.9)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:#fff;border-color:var(--w20)}
+.btn.ghost:hover{background:var(--w10);border-color:var(--w30)}
+.btn.small{padding:6px 13px;font-size:12px}
+details.adv{margin-top:32px;color:var(--w55);font-size:13px}
+details.adv textarea{width:100%;height:70px;margin:8px 0;border:1px solid var(--w15);border-radius:12px;padding:10px;background:var(--w02)}
+.hint{font-size:12px;color:var(--w45);margin:4px 0 0}
 
-/* layout */
-.wrap{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 62px)}
-.rail{background:var(--paper);border-right:1px solid var(--line);padding:18px 18px 90px;overflow:auto;max-height:calc(100vh - 62px);position:sticky;top:0}
-.rail h3{font-size:15px;margin:18px 0 8px}
+.wrap{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 62px)}
+.rail{background:var(--side);border-right:1px solid var(--w06);padding:20px 18px 96px;overflow:auto;max-height:calc(100vh - 62px);position:sticky;top:0}
+.rail h3,.lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--w45);margin:22px 0 10px}
 .rail h3:first-child{margin-top:0}
 .f{display:block;margin-bottom:10px}
-.f span{display:block;font-size:13px;color:var(--ink2);margin-bottom:3px}
-.f input[type=text],.f select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff}
+.f span{display:block;font-size:12px;color:var(--w55);margin-bottom:4px}
+.f input[type=text],.f select{width:100%;border:1px solid var(--w10);border-radius:8px;padding:8px 10px;background:var(--w02);color:#fff}
+.f input::placeholder{color:var(--w30)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;font-size:13px}
-.chip[aria-pressed=true]{background:var(--blue-soft);border-color:var(--blue);color:var(--blue);font-weight:600}
-.check{display:flex;gap:8px;align-items:center;font-size:14px;margin:5px 0}
-.railfoot{position:fixed;bottom:0;left:0;width:320px;padding:12px 18px;background:var(--paper);border-top:1px solid var(--line);display:flex;gap:8px}
+.chip{border:1px solid var(--w15);background:transparent;color:var(--w70);border-radius:99px;padding:4px 10px;font-size:12px}
+.chip[aria-pressed=true]{background:#fff;border-color:#fff;color:#000}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--w70);margin:6px 0}
+details.morefilters{margin-top:18px;border-top:1px solid var(--w06);padding-top:14px}
+details.morefilters summary{cursor:pointer;font-size:12px;color:var(--w70)}
+details.morefilters[open] summary{margin-bottom:14px}
+.railfoot{position:fixed;bottom:0;left:0;width:300px;padding:12px 18px;background:var(--side);border-top:1px solid var(--w06);display:flex;gap:8px}
 .railfoot .btn{flex:1}
-.hint{font-size:12.5px;color:var(--ink2);margin:4px 0 0}
 
 main{padding:20px 24px 60px;min-width:0}
-.bar{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.bar h2{font-size:24px}
+.bar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.bar h2{font-size:22px}
 .bar .sp{margin-left:auto;display:flex;gap:8px;align-items:center}
-.note{padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:14px}
-.note.warn{background:var(--amber-soft);border:1px solid var(--amber)}
-.note.err{background:#FBE6E3;border:1px solid var(--red);color:#7A1E17}
+.bar select{border:1px solid var(--w10);border-radius:99px;padding:6px 12px;background:transparent;font-size:12px}
+.note{padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:13px;border:1px solid var(--w10);background:var(--card)}
+.note.warn{border-color:rgba(249,156,0,.35);color:#fcbb00}
+.note.err{border-color:rgba(251,44,54,.4);color:#ff8087}
 
-table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-th{font-size:13px;font-weight:600;color:var(--ink2);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:#F8F9FB}
-th button{background:none;border:0;padding:0;font-weight:600;color:inherit}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--w06);border-radius:12px;overflow:hidden}
+th{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.16em;color:var(--w45);text-align:left;padding:12px 14px;border-bottom:1px solid var(--w06);white-space:nowrap}
+th button{background:none;border:0;padding:0;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit}
 th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
-td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+td{padding:10px 14px;border-bottom:1px solid var(--w06);vertical-align:middle;font-size:13px}
 tr:last-child td{border-bottom:0}
 tbody tr{cursor:pointer}
-tbody tr:hover{background:#F6F8FF}
-.cr{display:flex;gap:10px;align-items:center;min-width:0}
-.av{width:38px;height:38px;border-radius:50%;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-weight:700;flex:none;object-fit:cover}
-.cr b{display:block}
-.cr small{display:block;color:var(--ink2);max-width:46ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ver{color:var(--blue);font-size:12px;font-weight:600;margin-left:4px}
-.bdg{display:inline-block;background:var(--amber-soft);border-radius:6px;padding:1px 7px;font-size:12px;margin:1px 3px 1px 0;white-space:nowrap}
-.empty{padding:50px 20px;text-align:center;color:var(--ink2);background:var(--paper);border:1px dashed var(--line);border-radius:12px}
+tbody tr:hover{background:var(--w04)}
+.cr{display:flex;gap:12px;align-items:center;min-width:0}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.03));border:1px solid var(--w10);color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px;flex:none;object-fit:cover}
+.cr b{display:block;font-weight:600}
+.cr small{display:block;color:var(--w45);font-size:11px;max-width:46ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ver{color:var(--teal);font-size:11px;font-weight:500;margin-left:6px;letter-spacing:0}
+.bdg{display:inline-block;border:1px solid var(--w15);color:var(--w70);border-radius:6px;padding:2px 8px;font-size:10px;margin:1px 4px 1px 0;white-space:nowrap}
+.empty{padding:56px 20px;text-align:center;color:var(--w45);background:var(--card);border:1px solid var(--w06);border-radius:12px}
 .more{margin:14px auto 0;display:block}
 
-/* drawer */
-.scrim{position:fixed;inset:0;background:rgba(22,32,58,.35)}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--paper);overflow:auto;padding:22px 24px 40px;box-shadow:-12px 0 40px rgba(22,32,58,.18)}
-.drawer .x{position:absolute;top:14px;right:16px;background:none;border:0;font-size:24px;line-height:1}
-.drawer .head{display:flex;gap:14px;align-items:center;margin-bottom:10px;padding-right:30px}
-.drawer .av{width:64px;height:64px;font-size:22px}
-.drawer h2{font-size:26px}
-.drawer h3{font-size:16px;margin:22px 0 8px}
-.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.kv div{border:1px solid var(--line);border-radius:10px;padding:9px 11px}
-.kv span{display:block;font-size:12.5px;color:var(--ink2)}
-.kv b{font-family:"Bricolage Grotesque",sans-serif;font-size:21px}
-.brow{display:grid;grid-template-columns:110px 1fr 46px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
-.brow i{display:block;height:8px;border-radius:4px;background:var(--blue)}
-.brow em{font-style:normal;text-align:right;color:var(--ink2);font-variant-numeric:tabular-nums}
-.media{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.media a{display:block;aspect-ratio:4/5;border-radius:8px;background:var(--mist);overflow:hidden;position:relative;color:#fff;text-decoration:none;font-size:11.5px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(980px,100vw);background:#0a0a0a;border-left:1px solid var(--w10);overflow:auto;padding:20px 20px 48px}
+.drawer .x{position:absolute;top:26px;right:32px;background:none;border:0;font-size:22px;line-height:1;color:var(--w55);z-index:1}
+.panel{background:var(--card);border:1px solid var(--w06);border-radius:12px;padding:20px;min-width:0}
+.panel .lbl{margin:0 0 12px}
+.igrid{display:grid;gap:12px}
+.g2{display:grid;grid-template-columns:1fr 1.2fr;gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.phead{display:flex;gap:14px;align-items:center;padding-right:28px}
+.phead .av{width:56px;height:56px;font-size:20px}
+.phead h2{font-size:18px}
+.phead .sub{margin:2px 0 8px;font-size:12px;color:var(--w55)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.big{font-size:56px;font-weight:600;letter-spacing:-.03em;line-height:1;margin:0}
+.bigsub{margin:8px 0 0;font-size:12px;color:var(--w55)}
+.kpi{margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em}
+.legend{display:flex;gap:16px;font-size:11px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.legend i{width:6px;height:6px;border-radius:9px;background:currentColor}
+.ages{display:flex;align-items:flex-end;gap:14px;height:96px;margin-top:14px}
+.ages div{flex:1;display:flex;gap:3px;align-items:flex-end;height:100%}
+.ages b{flex:1;border-radius:2px;min-height:2px}
+.agel{display:flex;gap:14px;margin-top:6px}
+.agel span{flex:1;font-size:9px;color:var(--w45);text-align:center}
+.brow{margin:0 0 10px}
+.brow p{display:flex;justify-content:space-between;gap:10px;margin:0 0 5px;font-size:12px}
+.brow em{font-style:normal;color:var(--w55);font-variant-numeric:tabular-nums}
+.brow .trk{display:block;height:3px;border-radius:3px;background:var(--w10);overflow:hidden}
+.brow .trk i{display:block;height:100%;background:#fff;border-radius:3px}
+.media{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.media a{display:block;aspect-ratio:4/5;border-radius:12px;background:var(--w04);overflow:hidden;position:relative;color:#fff;text-decoration:none;font-size:11px}
 .media img{width:100%;height:100%;object-fit:cover;display:block}
-.media span{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.sl select,.sl textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px}
-.sl textarea{height:70px;resize:vertical}
-.muted{color:var(--ink2)}
-.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:r .7s linear infinite;vertical-align:-2px}
+.media span{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.sl select,.sl textarea{width:100%;border:1px solid var(--w10);border-radius:8px;padding:8px 10px;background:var(--w02);margin-top:8px}
+.sl textarea{height:72px;resize:vertical}
+.muted{color:var(--w45)}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--w15);border-top-color:#fff;border-radius:50%;animation:r .7s linear infinite;vertical-align:-2px}
 @keyframes r{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 @media (max-width:900px){
   .wrap{grid-template-columns:1fr}
-  .rail{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);padding-bottom:18px}
-  .railfoot{position:static;width:auto;border:0;padding:12px 0 0}
+  .rail{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--w06);padding-bottom:18px}
+  .railfoot{position:static;width:auto;border:0;padding:12px 0 0;background:none}
   .hide-s{display:none}
-  .login h2{font-size:34px}
+  .login h2{font-size:38px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .media{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
 <body>
 
 <header class="top">
-  <h1>Timeless Creator Discovery</h1>
+  <h1>Timeless Club<em>Creator Discovery</em></h1>
   <nav class="tabs hidden" id="tabs" role="tablist">
     <button class="tab" role="tab" data-view="search" aria-selected="true">Ricerca</button>
     <button class="tab" role="tab" data-view="saved" aria-selected="false">Salvati <span id="savedCount"></span></button>
@@ -132,7 +153,7 @@ tbody tr:hover{background:#F6F8FF}
 
 <!-- LOGIN -->
 <section class="login" id="login">
-  <h2>Trova i creator giusti con i dati di Instagram.</h2>
+  <h2>Trova i creator giusti. <em>Con i dati di Instagram.</em></h2>
   <p>Cerca nel Creator Marketplace di Meta per conto di Timeless Club: filtri su pubblico e performance, schede con insight e contenuti recenti, lista dei salvati con note.</p>
   <p><button class="btn" id="fbLogin">Accedi con Facebook</button></p>
   <div class="note err hidden" id="loginErr"></div>
@@ -148,55 +169,57 @@ tbody tr:hover{background:#F6F8FF}
 <!-- APP -->
 <div class="wrap hidden" id="app">
   <aside class="rail" id="rail">
-    <h3>Cosa cerchi</h3>
-    <label class="f"><span>Parole chiave</span><input type="text" id="q" placeholder="es. skincare, running, cucina"></label>
-    <label class="f"><span>Username esatto</span><input type="text" id="username" placeholder="senza @"></label>
-    <label class="f"><span>Simili a (fino a 5 username, separati da virgola)</span><input type="text" id="similar"></label>
-    <label class="f"><span>Ordina i suggerimenti per</span>
-      <select id="rec">
-        <option value="">Predefinito</option>
-        <option value="most_relevant_for_me">Più rilevanti per il brand</option>
-        <option value="high_ad_performance">Migliori performance nelle ads</option>
-        <option value="most_ads_experience">Più esperienza con le ads</option>
-        <option value="similar_brands">Hanno lavorato con brand simili</option>
-        <option value="similar_audience">Pubblico simile al nostro</option>
-        <option value="interested_in_collaboration">Interessati a collaborare</option>
-      </select></label>
-
-    <h3>Creator</h3>
-    <label class="f"><span>Paesi (codici ISO, separati da virgola)</span><input type="text" id="cCountries" value="IT"></label>
-    <div class="two">
-      <label class="f"><span>Follower da</span><select id="fMin"></select></label>
-      <label class="f"><span>Follower fino a</span><select id="fMax"></select></label>
-    </div>
-    <div class="two">
-      <label class="f"><span>Account coinvolti da</span><select id="eMin"></select></label>
-      <label class="f"><span>fino a</span><select id="eMax"></select></label>
-    </div>
-    <div class="two">
-      <label class="f"><span>Età</span><select id="cAge"></select></label>
-      <label class="f"><span>Genere</span><select id="cGender"><option value="">Tutti</option><option value="female">Donna</option><option value="male">Uomo</option></select></label>
-    </div>
-    <label class="f"><span>Lingue (codici, es. it, en)</span><input type="text" id="cLang"></label>
-    <div class="f"><span>Interessi (massimo 5)</span><div class="chips" id="interests"></div></div>
-
     <h3>Pubblico del creator</h3>
-    <label class="f"><span>Paesi prevalenti (codici ISO)</span><input type="text" id="aCountries"></label>
+    <label class="f"><span>Paese</span><input type="text" id="aCountries" value="IT" placeholder="es. IT"></label>
+    <label class="f"><span>Città</span><input type="text" id="aCity" placeholder="es. Milano"></label>
     <div class="two">
       <label class="f"><span>Età prevalente</span><select id="aAge"></select></label>
       <label class="f"><span>Genere prevalente</span><select id="aGender"><option value="">Tutti</option><option value="female">Donne</option><option value="male">Uomini</option></select></label>
     </div>
+    <p class="hint">Paese, età e genere filtrano la ricerca di Meta. La città tiene solo i creator che la hanno tra le principali del loro pubblico.</p>
 
-    <h3>Attività e performance</h3>
-    <label class="f"><span>Crescita follower (30 giorni)</span>
-      <select id="growth"><option value="">Qualsiasi</option><option value="top_10_percent">Top 10%</option><option value="top_30_percent">Top 30%</option><option value="top_50_percent">Top 50%</option></select></label>
-    <label class="f"><span>Ha pubblicato negli ultimi</span>
-      <select id="recent"><option value="">Qualsiasi periodo</option><option value="last_7_days">7 giorni</option><option value="last_30_days">30 giorni</option><option value="last_90_days">90 giorni</option></select></label>
-    <label class="check"><input type="checkbox" id="bEmail"> Ha un'email di contatto pubblica</label>
-    <label class="check"><input type="checkbox" id="bPortfolio"> Ha un portfolio</label>
-    <label class="check"><input type="checkbox" id="bVerified"> Account verificato</label>
-    <label class="check"><input type="checkbox" id="bAds"> Già comparso in ads a pagamento</label>
-    <label class="check"><input type="checkbox" id="bNoMsg"> Escludi chi abbiamo già contattato</label>
+    <h3>Creator</h3>
+    <label class="f"><span>Parole chiave</span><input type="text" id="q" placeholder="es. skincare, running, cucina"></label>
+    <div class="two">
+      <label class="f"><span>Follower da</span><select id="fMin"></select></label>
+      <label class="f"><span>Follower fino a</span><select id="fMax"></select></label>
+    </div>
+    <div class="f"><span>Interessi (massimo 5)</span><div class="chips" id="interests"></div></div>
+
+    <details class="morefilters">
+      <summary>Altri filtri</summary>
+      <label class="f"><span>Username esatto</span><input type="text" id="username" placeholder="senza @"></label>
+      <label class="f"><span>Simili a (fino a 5 username, separati da virgola)</span><input type="text" id="similar"></label>
+      <label class="f"><span>Ordina i suggerimenti per</span>
+        <select id="rec">
+          <option value="">Predefinito</option>
+          <option value="most_relevant_for_me">Più rilevanti per il brand</option>
+          <option value="high_ad_performance">Migliori performance nelle ads</option>
+          <option value="most_ads_experience">Più esperienza con le ads</option>
+          <option value="similar_brands">Hanno lavorato con brand simili</option>
+          <option value="similar_audience">Pubblico simile al nostro</option>
+          <option value="interested_in_collaboration">Interessati a collaborare</option>
+        </select></label>
+      <label class="f"><span>Paese del creator (codici ISO)</span><input type="text" id="cCountries" placeholder="es. IT"></label>
+      <div class="two">
+        <label class="f"><span>Account coinvolti da</span><select id="eMin"></select></label>
+        <label class="f"><span>fino a</span><select id="eMax"></select></label>
+      </div>
+      <div class="two">
+        <label class="f"><span>Età del creator</span><select id="cAge"></select></label>
+        <label class="f"><span>Genere del creator</span><select id="cGender"><option value="">Tutti</option><option value="female">Donna</option><option value="male">Uomo</option></select></label>
+      </div>
+      <label class="f"><span>Lingue (codici, es. it, en)</span><input type="text" id="cLang"></label>
+      <label class="f"><span>Crescita follower (30 giorni)</span>
+        <select id="growth"><option value="">Qualsiasi</option><option value="top_10_percent">Top 10%</option><option value="top_30_percent">Top 30%</option><option value="top_50_percent">Top 50%</option></select></label>
+      <label class="f"><span>Ha pubblicato negli ultimi</span>
+        <select id="recent"><option value="">Qualsiasi periodo</option><option value="last_7_days">7 giorni</option><option value="last_30_days">30 giorni</option><option value="last_90_days">90 giorni</option></select></label>
+      <label class="check"><input type="checkbox" id="bEmail"> Ha un'email di contatto pubblica</label>
+      <label class="check"><input type="checkbox" id="bPortfolio"> Ha un portfolio</label>
+      <label class="check"><input type="checkbox" id="bVerified"> Account verificato</label>
+      <label class="check"><input type="checkbox" id="bAds"> Già comparso in ads a pagamento</label>
+      <label class="check"><input type="checkbox" id="bNoMsg"> Escludi chi abbiamo già contattato</label>
+    </details>
 
     <div class="railfoot">
       <button class="btn" id="go">Cerca creator</button>
@@ -251,7 +274,7 @@ const MIN_FIELDS='id,username,country,biography';
 const MEDIA_SUB='{id,media_type,product_type,caption,creation_time,permalink,thumbnail_url,likes,comments,views,shares}';
 
 /* ---------- stato ---------- */
-const S={token:null,ig:null,page:null,rows:[],after:null,lastParams:null,metrics:new Map(),sort:{k:null,d:-1},selInt:new Set()};
+const S={token:null,ig:null,page:null,rows:[],after:null,lastParams:null,metrics:new Map(),aud:new Map(),city:'',cityLabel:'',sort:{k:null,d:-1},selInt:new Set()};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf=new Intl.NumberFormat('it-IT',{notation:'compact',maximumFractionDigits:1});
@@ -381,7 +404,7 @@ async function search(more){
   showErr(null);
   const btn=more?$('more'):$('go');btn.disabled=true;const old=btn.textContent;btn.textContent='Cerco…';
   try{
-    if(!more){S.lastParams=buildParams();S.rows=[];S.after=null;S.sort={k:null,d:-1}}
+    if(!more){S.lastParams=buildParams();S.cityLabel=$('aCity').value.trim();S.city=normCity(S.cityLabel);S.rows=[];S.after=null;S.sort={k:null,d:-1}}
     const p={...S.lastParams,limit:25};if(more&&S.after)p.after=S.after;
     let j;
     try{j=await creators({...p,fields:LIST_FIELDS})}
@@ -421,14 +444,31 @@ async function loadMetrics(u){
   const m={followers:a.total_followers,ir:b.reels_interaction_rate,hook:b.reels_hook_rate};
   S.metrics.set(u,m);return m;
 }
+const CITY_ALIAS={roma:'rome',milano:'milan',torino:'turin',napoli:'naples',firenze:'florence',venezia:'venice',genova:'genoa',padova:'padua'};
+const normCity=s=>{s=String(s||'').trim().toLowerCase();return CITY_ALIAS[s]||s};
+async function loadCities(u){
+  if(S.aud.has(u))return S.aud.get(u);
+  const x=await insightCall(u,'metrics(creator_engaged_accounts).period(overall).time_range(this_month).breakdown(top_cities)');
+  const list=x.creator_engaged_accounts__bd||[];S.aud.set(u,list);return list;
+}
+// Quota della città cercata, calcolata sulle città principali restituite da Meta.
+function cityPct(u){
+  const list=S.aud.get(u);if(!list||!list.length||!S.city)return null;
+  const tot=list.reduce((s,i)=>s+i.v,0)||1;
+  const hit=list.find(i=>{const k=i.k.toLowerCase(),c0=k.split(',')[0].trim();return k.includes(S.city)||(c0&&S.city.includes(c0))});
+  return hit?hit.v/tot*100:null;
+}
+const cityTxt=u=>{const p=cityPct(u);return p==null?'—':p.toFixed(1).replace('.',',')+'%'};
+function visibleRows(){return S.rows.filter(r=>{if(!S.city)return true;const l=S.aud.get(r.username);return !l||!l.length||cityPct(r.username)!=null})}
 async function enrich(rows){
-  const q=rows.filter(r=>r.username&&!S.metrics.has(r.username));if(!q.length)return;
+  const q=rows.filter(r=>r.username&&(!S.metrics.has(r.username)||(S.city&&!S.aud.has(r.username))));
+  if(!q.length){if(S.city)renderResults();return}
   let done=0;const st=$('enrichState'),total=q.length;
-  const tick=()=>{st.innerHTML=done<total?'<span class="spin"></span> Carico le metriche '+done+'/'+total:''};
+  const tick=()=>{st.innerHTML=done<total?'<span class="spin"></span> Carico i dati '+done+'/'+total:''};
   tick();
-  const worker=async()=>{while(q.length){const r=q.shift();await loadMetrics(r.username);done++;paintMetrics(r.username);tick()}};
+  const worker=async()=>{while(q.length){const r=q.shift();await loadMetrics(r.username);if(S.city)await loadCities(r.username);done++;paintMetrics(r.username);tick()}};
   await Promise.all(Array.from({length:Math.min(4,total)},worker));
-  st.textContent='';
+  st.textContent='';if(S.city)renderResults();
 }
 function paintMetrics(u){
   const m=S.metrics.get(u)||{};
@@ -436,6 +476,7 @@ function paintMetrics(u){
     tr.querySelector('.mF').textContent=fmtN(m.followers);
     tr.querySelector('.mI').textContent=fmtP(m.ir);
     tr.querySelector('.mH').textContent=fmtP(m.hook);
+    const c=tr.querySelector('.mC');if(c)c.textContent=cityTxt(u);
   });
 }
 
@@ -453,23 +494,24 @@ function rowHtml(r){
     '<td class="num mF">'+fmtN(m.followers)+'</td>'+
     '<td class="num mI">'+fmtP(m.ir)+'</td>'+
     '<td class="num mH">'+fmtP(m.hook)+'</td>'+
+    (S.city?'<td class="num mC">'+cityTxt(r.username)+'</td>':'')+
     '<td class="hide-s">'+badges(r)+'</td>'+
     '<td><button class="btn ghost small" data-save="'+esc(r.username)+'">'+(sv?'Salvato':'Salva')+'</button></td></tr>';
 }
 function sorted(rows){
-  const {k,d}=S.sort;if(!k)return rows;
-  const val=r=>{const m=S.metrics.get(r.username)||{};const v=m[k];return v==null?-Infinity:v};
+  const {k,d}=S.sort.k?S.sort:(S.city?{k:'city',d:-1}:S.sort);if(!k)return rows;
+  const val=r=>{const v=k==='city'?cityPct(r.username):(S.metrics.get(r.username)||{})[k];return v==null?-Infinity:v};
   return [...rows].sort((a,b)=>(val(a)-val(b))*d);
 }
 function tableHtml(rows){
   const th=(k,l)=>'<th class="num"><button data-sort="'+k+'">'+l+(S.sort.k===k?(S.sort.d<0?' ▼':' ▲'):'')+'</button></th>';
-  return '<table><thead><tr><th>Creator</th><th class="hide-s">Paese</th>'+th('followers','Follower')+th('ir','Interazione reel')+th('hook','Hook rate')+'<th class="hide-s">Badge</th><th></th></tr></thead><tbody>'+rows.map(rowHtml).join('')+'</tbody></table>';
+  return '<table><thead><tr><th>Creator</th><th class="hide-s">Paese</th>'+th('followers','Follower')+th('ir','Interazione reel')+th('hook','Hook rate')+(S.city?th('city','Quota a '+esc(S.cityLabel)):'')+'<th class="hide-s">Badge</th><th></th></tr></thead><tbody>'+rows.map(rowHtml).join('')+'</tbody></table>';
 }
 function renderResults(){
-  const n=S.rows.length;
-  $('resTitle').textContent=n?n+' creator':'Risultati';
+  const rows=visibleRows(),n=rows.length;
+  $('resTitle').textContent=S.rows.length?n+' creator':'Risultati';
   $('mockNote').classList.toggle('hidden',!S.rows.some(r=>/^mocked_username/.test(r.username||'')));
-  $('results').innerHTML=n?tableHtml(sorted(S.rows)):'<div class="empty">Nessun creator con questi filtri. Prova ad allargare follower, paese o interessi.</div>';
+  $('results').innerHTML=n?tableHtml(sorted(rows)):'<div class="empty">Nessun creator con questi filtri. Prova ad allargare paese, città o follower.</div>';
   $('more').classList.toggle('hidden',!S.after);
   $('csvRes').disabled=!n;
 }
@@ -521,7 +563,7 @@ function download(name,text){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 const pct=v=>v==null?'':(v<=1?v*100:v).toFixed(2).replace('.',',');
-$('csvRes').onclick=()=>download('creator-ricerca.csv',csv(sorted(S.rows),[
+$('csvRes').onclick=()=>download('creator-ricerca.csv',csv(sorted(visibleRows()),[
   ['Username',r=>r.username],['Paese',r=>r.country],['Follower',r=>(S.metrics.get(r.username)||{}).followers],
   ['Interazione reel %',r=>pct((S.metrics.get(r.username)||{}).ir)],['Hook rate %',r=>pct((S.metrics.get(r.username)||{}).hook)],
   ['Email',r=>r.email],['Portfolio',r=>r.portfolio_url],['Verificato',r=>r.is_account_verified?'sì':''],['Profilo',r=>r.username?'https://instagram.com/'+r.username:''],['Bio',r=>r.biography]]));
@@ -535,13 +577,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 function bars(title,items,labeler){
   if(!items||!items.length)return '';
   const tot=items.reduce((s,i)=>s+i.v,0)||1;
-  return '<h3>'+title+'</h3>'+items.slice(0,6).map(i=>'<div class="brow"><span>'+esc(labeler?labeler(i.k):i.k)+'</span><span><i style="width:'+Math.max(2,i.v/tot*100)+'%"></i></span><em>'+Math.round(i.v/tot*100)+'%</em></div>').join('');
+  return '<div class="panel"><div class="lbl">'+title+'</div>'+items.slice(0,5).map(i=>{const p=i.v/tot*100;return '<div class="brow"><p><span>'+esc(labeler?labeler(i.k):i.k)+'</span><em>'+p.toFixed(1).replace('.',',')+'%</em></p><span class="trk"><i style="width:'+Math.max(1,p)+'%"></i></span></div>'}).join('')+'</div>';
 }
 function mediaGrid(title,list){
   const items=(list&&list.data)||[];if(!items.length)return '';
-  return '<h3>'+title+'</h3><div class="media">'+items.slice(0,12).map(m=>
+  return '<div class="panel"><div class="lbl">'+title+'</div><div class="media">'+items.slice(0,12).map(m=>
     '<a href="'+esc(m.permalink||m.facebook_permalink||'#')+'" target="_blank" rel="noopener">'+(m.thumbnail_url?'<img src="'+esc(m.thumbnail_url)+'" alt="" loading="lazy">':'')+
-    '<span>'+(m.views!=null?fmtN(m.views)+' views':fmtN(m.likes)+' like')+'</span></a>').join('')+'</div>';
+    '<span>'+(m.views!=null?fmtN(m.views)+' views':fmtN(m.likes)+' like')+'</span></a>').join('')+'</div></div>';
 }
 async function openDrawer(r){
   if(!r)return;const u=r.username;
@@ -551,34 +593,45 @@ async function openDrawer(r){
   const safe=async f=>{try{return await f()}catch(e){return null}};
   const one=async fields=>{const j=await creators({username:u,fields});return j.data&&j.data[0]};
   const base='metrics(creator_engaged_accounts).period(overall).time_range(this_month)';
-  const [prof,m,over,g,a,c,ci,rm,bm]=await Promise.all([
+  const [prof,m,over,g,a,ag,c,ci,rm,bm]=await Promise.all([
     safe(()=>one(LIST_FIELDS+',has_brand_partnership_experience,past_brand_partnership_partners,is_creator_following_brand')),
     loadMetrics(u),
     insightCall(u,'metrics(creator_engaged_accounts,creator_reach,total_views,account_interactions).period(overall).time_range(this_month)'),
-    insightCall(u,base+'.breakdown(gender)'),insightCall(u,base+'.breakdown(age)'),
-    insightCall(u,base+'.breakdown(top_countries)'),insightCall(u,base+'.breakdown(top_cities)'),
+    insightCall(u,base+'.breakdown(gender)'),insightCall(u,base+'.breakdown(age)'),insightCall(u,base+'.breakdown(age,gender)'),
+    insightCall(u,base+'.breakdown(top_countries)'),loadCities(u),
     safe(()=>one('recent_media.limit(12)'+MEDIA_SUB)),safe(()=>one('branded_content_media'+MEDIA_SUB))
   ]);
   if(!$('dBody'))return;
   const p={...r,...(prof||{})};const sv=saved[u];
   const partners=Array.isArray(p.past_brand_partnership_partners)?p.past_brand_partnership_partners.map(x=>typeof x==='string'?x:(x.username||x.name||'')).filter(Boolean):[];
-  const gl={F:'Donne',M:'Uomini',U:'Non indicato',female:'Donne',male:'Uomini'};
-  $('dBody').innerHTML=
-    '<div class="head">'+avatar(p)+'<div><h2>'+esc(u)+'</h2><div class="muted">'+[p.country,p.category,AGES[p.age_bucket],p.is_account_verified?'verificato':''].filter(Boolean).map(esc).join(', ')+'</div></div></div>'+
-    '<div>'+badges(p)+'</div><p>'+esc(p.biography||'')+'</p>'+
-    '<div class="acts"><a class="btn small" href="https://instagram.com/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">Apri su Instagram</a>'+
+  const K='creator_engaged_accounts__bd';
+  const isF=k=>/^(f|female)$/i.test(k), isM=k=>/^(m|male)$/i.test(k);
+  const gs=g[K]||[];const gt=gs.reduce((s,i)=>s+i.v,0)||1;
+  const fP=Math.round((gs.find(i=>isF(i.k))||{v:0}).v/gt*100), mP=Math.round((gs.find(i=>isM(i.k))||{v:0}).v/gt*100);
+  const ageMap={};
+  for(const i of ag[K]||[]){const parts=i.k.split(' ');const gk=parts.find(x=>isF(x)||isM(x));const ak=parts.find(x=>/\d/.test(x));if(!gk||!ak)continue;(ageMap[ak]=ageMap[ak]||{f:0,m:0})[isF(gk)?'f':'m']+=i.v}
+  let ageKeys=Object.keys(ageMap);const split=ageKeys.length>0;
+  if(!split){for(const i of a[K]||[])ageMap[i.k]={f:i.v,m:0};ageKeys=Object.keys(ageMap)}
+  ageKeys.sort((x,y)=>parseInt(x)-parseInt(y));
+  const amax=Math.max(1,...ageKeys.map(k=>Math.max(ageMap[k].f,ageMap[k].m)));
+  const agePanel='<div class="panel"><div class="lbl">Età e genere</div>'+((gs.length||ageKeys.length)?
+    (gs.length?'<div class="legend"><span style="color:var(--gold)"><i></i>Donne '+fP+'%</span><span style="color:var(--teal)"><i></i>Uomini '+mP+'%</span></div>':'')+
+    (ageKeys.length?'<div class="ages">'+ageKeys.map(k=>'<div><b style="height:'+(ageMap[k].f/amax*100)+'%;background:'+(split?'var(--gold)':'rgba(255,255,255,.7)')+'"></b>'+(split?'<b style="height:'+(ageMap[k].m/amax*100)+'%;background:var(--teal)"></b>':'')+'</div>').join('')+'</div><div class="agel">'+ageKeys.map(k=>'<span>'+esc(k)+'</span>').join('')+'</div>':'')
+    :'<p class="muted" style="margin:0">Dati sul pubblico non disponibili per questo creator.</p>')+'</div>';
+  const kpi=(l,v)=>'<div class="panel"><div class="lbl">'+l+'</div><p class="kpi">'+v+'</p></div>';
+  $('dBody').innerHTML='<div class="igrid">'+
+    '<div class="panel"><div class="phead">'+avatar(p)+'<div><h2>'+esc(u)+(p.is_account_verified?'<span class="ver">verificato</span>':'')+'</h2><p class="sub">'+[p.category,p.country,m.followers!=null?fmtN(m.followers)+' follower':'',AGES[p.age_bucket]].filter(Boolean).map(esc).join(' · ')+'</p><div>'+badges(p)+'</div></div></div>'+
+      (p.biography?'<p class="muted" style="margin:14px 0 0;max-width:80ch">'+esc(p.biography)+'</p>':'')+
+      '<div class="acts"><a class="btn small" href="https://instagram.com/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">Apri su Instagram</a>'+
       (p.email?'<button class="btn ghost small" id="cpMail">Copia email</button>':'')+
       (p.portfolio_url?'<a class="btn ghost small" href="'+esc(p.portfolio_url)+'" target="_blank" rel="noopener">Portfolio</a>':'')+
-      '<button class="btn ghost small" id="dSave">'+(sv?'Rimuovi dai salvati':'Salva')+'</button></div>'+
-    (p.email?'<div class="muted">'+esc(p.email)+'</div>':'')+
-    '<h3>Numeri</h3><div class="kv">'+
-      '<div><span>Follower</span><b>'+fmtN(m.followers)+'</b></div><div><span>Interazione reel, 90 gg</span><b>'+fmtP(m.ir)+'</b></div><div><span>Hook rate, 90 gg</span><b>'+fmtP(m.hook)+'</b></div>'+
-      '<div><span>Account coinvolti, mese</span><b>'+fmtN(over.creator_engaged_accounts)+'</b></div><div><span>Copertura, mese</span><b>'+fmtN(over.creator_reach)+'</b></div><div><span>Visualizzazioni, mese</span><b>'+fmtN(over.total_views)+'</b></div></div>'+
-    bars('Pubblico per genere',g.creator_engaged_accounts__bd,k=>gl[k]||k)+bars('Pubblico per età',a.creator_engaged_accounts__bd)+
-    bars('Paesi principali',c.creator_engaged_accounts__bd)+bars('Città principali',ci.creator_engaged_accounts__bd)+
-    (partners.length?'<h3>Brand con cui ha lavorato</h3><div>'+partners.map(x=>'<span class="bdg">'+esc(x)+'</span>').join('')+'</div>':'')+
+      '<button class="btn ghost small" id="dSave">'+(sv?'Rimuovi dai salvati':'Salva')+'</button></div></div>'+
+    '<div class="g2"><div class="panel"><p class="big">'+fmtP(m.ir)+'</p><p class="bigsub">Interazione sui reel, ultimi 90 giorni</p><p class="bigsub">Hook rate '+fmtP(m.hook)+'</p></div>'+agePanel+'</div>'+
+    '<div class="g4">'+kpi('Follower',fmtN(m.followers))+kpi('Account coinvolti',fmtN(over.creator_engaged_accounts))+kpi('Copertura',fmtN(over.creator_reach))+kpi('Visualizzazioni',fmtN(over.total_views))+'</div>'+
+    '<div class="g3">'+bars('Paesi',c[K])+bars('Città',ci)+(partners.length?'<div class="panel"><div class="lbl">Brand partner</div>'+partners.map(x=>'<span class="bdg">'+esc(x)+'</span>').join('')+'</div>':'')+'</div>'+
     mediaGrid('Contenuti recenti',rm&&rm.recent_media)+mediaGrid('Branded content',bm&&bm.branded_content_media)+
-    '<div class="sl'+(sv?'':' hidden')+'" id="slBox"><h3>Stato e note</h3><select id="slStatus">'+STATUSES.map(s=>'<option'+(sv&&sv.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select><textarea id="slNote" placeholder="Note interne: compenso, idee, contatti">'+esc(sv?sv.note:'')+'</textarea></div>';
+    '<div class="panel sl'+(sv?'':' hidden')+'" id="slBox"><div class="lbl">Stato e note</div><select id="slStatus">'+STATUSES.map(s=>'<option'+(sv&&sv.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select><textarea id="slNote" placeholder="Note interne: compenso, idee, contatti">'+esc(sv?sv.note:'')+'</textarea></div>'+
+    '</div>';
   const mail=$('cpMail');if(mail)mail.onclick=async()=>{try{await navigator.clipboard.writeText(p.email);mail.textContent='Email copiata'}catch(e){}};
   $('dSave').onclick=()=>{toggleSave(p);const on=!!saved[u];$('dSave').textContent=on?'Rimuovi dai salvati':'Salva';$('slBox').classList.toggle('hidden',!on);
     document.querySelectorAll('[data-save="'+CSS.escape(u)+'"]').forEach(b=>b.textContent=on?'Salvato':'Salva')};
