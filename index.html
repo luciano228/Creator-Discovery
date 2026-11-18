@@ -140,7 +140,7 @@ tbody tr:hover{background:#F6F8FF}
     <summary>Hai già un token di Pagina?</summary>
     <textarea id="tokIn" placeholder="Incolla qui il token di accesso della Pagina" spellcheck="false"></textarea>
     <button class="btn ghost small" id="tokGo">Usa questo token</button>
-    <p class="hint">Il token resta solo in questa scheda del browser e si cancella alla chiusura.</p>
+    <p class="hint">Il token viene salvato solo in questo browser: non dovrai più accedere finché non premi Esci.</p>
   </details>
 </section>
 
@@ -284,7 +284,7 @@ $('fbLogin').onclick=()=>{
 $('tokGo').onclick=()=>{const t=$('tokIn').value.trim();if(t)startWithToken(t,true)};
 $('logout').onclick=()=>logout();
 function logout(){
-  S.token=null;try{sessionStorage.removeItem('tcd_s')}catch(e){}
+  S.token=null;try{localStorage.removeItem('tcd_s')}catch(e){}
   $('app').classList.add('hidden');$('tabs').classList.add('hidden');$('who').classList.add('hidden');$('login').classList.remove('hidden');
 }
 // Accetta un token utente o di Pagina e ricava Pagina + account Instagram.
@@ -305,7 +305,7 @@ async function startWithToken(tok){
       if(!me.instagram_business_account)throw {message:'Questo token non ha accesso a un account Instagram business.'};
       S.page=me.name;S.ig=me.instagram_business_account.id;
     }
-    try{sessionStorage.setItem('tcd_s',JSON.stringify({t:S.token,ig:S.ig,p:S.page}))}catch(e){}
+    try{localStorage.setItem('tcd_s',JSON.stringify({t:S.token,ig:S.ig,p:S.page}))}catch(e){}
     enter();
   }catch(e){S.token=null;showLoginErr(e.message||'Accesso non riuscito.')}
 }
@@ -317,7 +317,7 @@ function enter(){
   const h=new URLSearchParams(location.hash.slice(1)), q=new URLSearchParams(location.search);
   if(h.get('access_token')){history.replaceState(null,'',location.pathname);startWithToken(h.get('access_token'));return}
   if(q.get('error')){history.replaceState(null,'',location.pathname);showLoginErr('Accesso annullato o rifiutato da Facebook.');return}
-  try{const s=JSON.parse(sessionStorage.getItem('tcd_s'));if(s&&s.t){S.token=s.t;S.ig=s.ig;S.page=s.p;enter()}}catch(e){}
+  try{const s=JSON.parse(localStorage.getItem('tcd_s'));if(s&&s.t){S.token=s.t;S.ig=s.ig;S.page=s.p;enter()}}catch(e){}
 })();
 
 /* ---------- filtri ---------- */
