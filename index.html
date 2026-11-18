@@ -138,6 +138,16 @@ tbody tr:hover{background:var(--w04)}
   .g2,.g3,.g4{grid-template-columns:1fr}
   .media{grid-template-columns:repeat(3,1fr)}
 }
+.gk{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.phd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.phd .lbl{margin:0}
+.seg{display:flex;padding:3px;border:1px solid var(--w10);border-radius:99px}
+.seg button{background:none;border:0;color:var(--w55);font-size:11px;padding:4px 12px;border-radius:99px}
+.seg button[aria-pressed=true]{background:#fff;color:#000}
+.sims{display:flex;flex-wrap:wrap;gap:8px}
+.sim{display:flex;align-items:center;gap:8px;background:var(--w02);border:1px solid var(--w10);border-radius:99px;padding:4px 14px 4px 4px;font-size:12px}
+.sim:hover{border-color:var(--w30)}
+.sim .av{width:28px;height:28px;font-size:11px}
 </style>
 </head>
 <body>
@@ -169,22 +179,32 @@ tbody tr:hover{background:var(--w04)}
 <!-- APP -->
 <div class="wrap hidden" id="app">
   <aside class="rail" id="rail">
-    <h3>Pubblico del creator</h3>
-    <label class="f"><span>Paese</span><input type="text" id="aCountries" value="IT" placeholder="es. IT"></label>
-    <label class="f"><span>Città</span><input type="text" id="aCity" placeholder="es. Milano"></label>
-    <div class="two">
-      <label class="f"><span>Età prevalente</span><select id="aAge"></select></label>
-      <label class="f"><span>Genere prevalente</span><select id="aGender"><option value="">Tutti</option><option value="female">Donne</option><option value="male">Uomini</option></select></label>
-    </div>
-    <p class="hint">Paese, età e genere filtrano la ricerca di Meta. La città tiene solo i creator che la hanno tra le principali del loro pubblico.</p>
-
     <h3>Creator</h3>
     <label class="f"><span>Parole chiave</span><input type="text" id="q" placeholder="es. skincare, running, cucina"></label>
     <div class="two">
-      <label class="f"><span>Follower da</span><select id="fMin"></select></label>
-      <label class="f"><span>Follower fino a</span><select id="fMax"></select></label>
+      <label class="f"><span>Genere</span><select id="cGender"><option value="">Tutti</option><option value="female">Donna</option><option value="male">Uomo</option></select></label>
+      <label class="f"><span>Età</span><select id="cAge"></select></label>
+    </div>
+    <div class="two">
+      <label class="f"><span>Follower da</span><input type="text" id="fMin" inputmode="numeric" placeholder="es. 20000"></label>
+      <label class="f"><span>Follower fino a</span><input type="text" id="fMax" inputmode="numeric" placeholder="es. 100000"></label>
+    </div>
+    <div class="two">
+      <label class="f"><span>Paese</span><input type="text" id="cCountries" value="IT"></label>
+      <label class="f"><span>Regione</span><select id="cState"><option value="">Tutte</option></select></label>
     </div>
     <div class="f"><span>Interessi (massimo 5)</span><div class="chips" id="interests"></div></div>
+
+    <h3>Pubblico del creator</h3>
+    <div class="two">
+      <label class="f"><span>Genere prevalente</span><select id="aGender"><option value="">Tutti</option><option value="female">Donne</option><option value="male">Uomini</option></select></label>
+      <label class="f"><span>Età prevalente</span><select id="aAge"></select></label>
+    </div>
+    <div class="two">
+      <label class="f"><span>Paese</span><input type="text" id="aCountries" placeholder="es. IT"></label>
+      <label class="f"><span>Città</span><input type="text" id="aCity" placeholder="es. Torino"></label>
+    </div>
+    <p class="hint">Genere, età e paese filtrano la ricerca di Meta. La città tiene solo i creator che la hanno tra le città principali del pubblico.</p>
 
     <details class="morefilters">
       <summary>Altri filtri</summary>
@@ -200,14 +220,9 @@ tbody tr:hover{background:var(--w04)}
           <option value="similar_audience">Pubblico simile al nostro</option>
           <option value="interested_in_collaboration">Interessati a collaborare</option>
         </select></label>
-      <label class="f"><span>Paese del creator (codici ISO)</span><input type="text" id="cCountries" placeholder="es. IT"></label>
       <div class="two">
         <label class="f"><span>Account coinvolti da</span><select id="eMin"></select></label>
         <label class="f"><span>fino a</span><select id="eMax"></select></label>
-      </div>
-      <div class="two">
-        <label class="f"><span>Età del creator</span><select id="cAge"></select></label>
-        <label class="f"><span>Genere del creator</span><select id="cGender"><option value="">Tutti</option><option value="female">Donna</option><option value="male">Uomo</option></select></label>
       </div>
       <label class="f"><span>Lingue (codici, es. it, en)</span><input type="text" id="cLang"></label>
       <label class="f"><span>Crescita follower (30 giorni)</span>
@@ -346,7 +361,12 @@ function enter(){
 
 /* ---------- filtri ---------- */
 function fillSel(id,vals,first,fmt){$(id).innerHTML='<option value="">'+first+'</option>'+vals.map(v=>'<option value="'+v+'">'+fmt(v)+'</option>').join('')}
-fillSel('fMin',F_MIN,'Nessun minimo',fmtN);fillSel('fMax',F_MAX,'Nessun massimo',fmtN);
+const REGIONI={'IT-65':'Abruzzo','IT-77':'Basilicata','IT-78':'Calabria','IT-72':'Campania','IT-45':'Emilia-Romagna','IT-36':'Friuli-Venezia Giulia','IT-62':'Lazio','IT-42':'Liguria','IT-25':'Lombardia','IT-57':'Marche','IT-67':'Molise','IT-21':'Piemonte','IT-75':'Puglia','IT-88':'Sardegna','IT-82':'Sicilia','IT-52':'Toscana','IT-32':'Trentino-Alto Adige','IT-55':'Umbria','IT-23':"Valle d'Aosta",'IT-34':'Veneto'};
+$('cState').innerHTML+=Object.entries(REGIONI).map(([k,n])=>'<option value="'+k+'">'+n+'</option>').join('');
+// Meta accetta solo alcune soglie di follower: uso la soglia più vicina e rifinisco sui dati caricati.
+const num=id=>{const n=parseInt(String($(id).value).replace(/\D/g,''),10);return isNaN(n)?null:n};
+const apiMin=n=>n==null?'':Math.max(...F_MIN.filter(x=>x<=n));
+const apiMax=n=>n==null?'':(F_MAX.find(x=>x>=n)||'');
 fillSel('eMin',E_MIN,'Nessun minimo',fmtN);fillSel('eMax',E_MAX,'Nessun massimo',fmtN);
 fillSel('cAge',Object.keys(AGES),'Tutte',k=>AGES[k]);fillSel('aAge',Object.keys(AGES),'Tutte',k=>AGES[k]);
 $('interests').innerHTML=Object.entries(INTERESTS).map(([k,v])=>'<button type="button" class="chip" aria-pressed="false" data-k="'+k+'">'+v+'</button>').join('');
@@ -365,8 +385,9 @@ function buildParams(){
     query:sim.length?'':$('q').value.trim(),  // "simili a" non si combina con le parole chiave
     similar_to_creators:arr(sim),
     recommendation_type:$('rec').value,
-    creator_countries:arr(list('cCountries').map(s=>s.toUpperCase())),
-    creator_min_followers:$('fMin').value, creator_max_followers:$('fMax').value,
+    creator_countries:arr($('cState').value?['IT']:list('cCountries').map(s=>s.toUpperCase())),
+    creator_states:$('cState').value?arr([$('cState').value]):'',
+    creator_min_followers:apiMin(num('fMin')), creator_max_followers:apiMax(num('fMax')),
     creator_min_engaged_accounts:$('eMin').value, creator_max_engaged_accounts:$('eMax').value,
     creator_age_bucket:$('cAge').value, creator_gender:$('cGender').value,
     creator_language:arr(list('cLang').map(s=>s.toLowerCase())),
@@ -404,11 +425,16 @@ async function search(more){
   showErr(null);
   const btn=more?$('more'):$('go');btn.disabled=true;const old=btn.textContent;btn.textContent='Cerco…';
   try{
-    if(!more){S.lastParams=buildParams();S.cityLabel=$('aCity').value.trim();S.city=normCity(S.cityLabel);S.rows=[];S.after=null;S.sort={k:null,d:-1}}
+    if(!more){S.lastParams=buildParams();S.cityLabel=$('aCity').value.trim();S.city=normCity(S.cityLabel);S.cityRaw=S.cityLabel.toLowerCase();S.fMin=num('fMin');S.fMax=num('fMax');S.rows=[];S.after=null;S.sort={k:null,d:-1}}
     const p={...S.lastParams,limit:25};if(more&&S.after)p.after=S.after;
     let j;
-    try{j=await creators({...p,fields:LIST_FIELDS})}
-    catch(e){if(e.code===100)j=await creators({...p,fields:MIN_FIELDS});else throw e}
+    const run=q=>creators({...q,fields:LIST_FIELDS}).catch(e=>{if(e.code===100)return creators({...q,fields:MIN_FIELDS});throw e});
+    try{j=await run(p)}
+    catch(e){
+      // Il formato del codice regione non è documentato: se "IT-21" non passa, riprovo con "21".
+      if(e.code===100&&p.creator_states&&p.creator_states.includes('IT-')){p.creator_states=p.creator_states.replace('IT-','');S.lastParams.creator_states=p.creator_states;j=await run(p)}
+      else throw e;
+    }
     const seen=new Set(S.rows.map(r=>r.id));
     const fresh=(j.data||[]).filter(r=>!seen.has(r.id));
     S.rows.push(...fresh);
@@ -451,24 +477,26 @@ async function loadCities(u){
   const x=await insightCall(u,'metrics(creator_engaged_accounts).period(overall).time_range(this_month).breakdown(top_cities)');
   const list=x.creator_engaged_accounts__bd||[];S.aud.set(u,list);return list;
 }
-// Quota della città cercata, calcolata sulle città principali restituite da Meta.
+// Posizione della città cercata tra le città principali del pubblico (1 = la prima).
 function cityPct(u){
   const list=S.aud.get(u);if(!list||!list.length||!S.city)return null;
-  const tot=list.reduce((s,i)=>s+i.v,0)||1;
-  const hit=list.find(i=>{const k=i.k.toLowerCase(),c0=k.split(',')[0].trim();return k.includes(S.city)||(c0&&S.city.includes(c0))});
-  return hit?hit.v/tot*100:null;
+  const idx=list.findIndex(i=>{const k=i.k.toLowerCase(),c0=k.split(',')[0].trim();return k.includes(S.city)||k.includes(S.cityRaw)||(c0&&(S.city.includes(c0)||S.cityRaw.includes(c0)))});
+  return idx<0?null:-(idx+1);
 }
-const cityTxt=u=>{const p=cityPct(u);return p==null?'—':p.toFixed(1).replace('.',',')+'%'};
-function visibleRows(){return S.rows.filter(r=>{if(!S.city)return true;const l=S.aud.get(r.username);return !l||!l.length||cityPct(r.username)!=null})}
+const cityTxt=u=>{const p=cityPct(u);return p==null?'—':(-p)+'ª città'};
+function visibleRows(){return S.rows.filter(r=>{
+  const m=S.metrics.get(r.username);
+  if(m&&m.followers!=null){if(S.fMin!=null&&m.followers<S.fMin)return false;if(S.fMax!=null&&m.followers>S.fMax)return false}
+  if(!S.city)return true;const l=S.aud.get(r.username);return !l||!l.length||cityPct(r.username)!=null})}
 async function enrich(rows){
   const q=rows.filter(r=>r.username&&(!S.metrics.has(r.username)||(S.city&&!S.aud.has(r.username))));
-  if(!q.length){if(S.city)renderResults();return}
+  if(!q.length){renderResults();return}
   let done=0;const st=$('enrichState'),total=q.length;
   const tick=()=>{st.innerHTML=done<total?'<span class="spin"></span> Carico i dati '+done+'/'+total:''};
   tick();
   const worker=async()=>{while(q.length){const r=q.shift();await loadMetrics(r.username);if(S.city)await loadCities(r.username);done++;paintMetrics(r.username);tick()}};
   await Promise.all(Array.from({length:Math.min(4,total)},worker));
-  st.textContent='';if(S.city)renderResults();
+  st.textContent='';renderResults();
 }
 function paintMetrics(u){
   const m=S.metrics.get(u)||{};
@@ -505,7 +533,7 @@ function sorted(rows){
 }
 function tableHtml(rows){
   const th=(k,l)=>'<th class="num"><button data-sort="'+k+'">'+l+(S.sort.k===k?(S.sort.d<0?' ▼':' ▲'):'')+'</button></th>';
-  return '<table><thead><tr><th>Creator</th><th class="hide-s">Paese</th>'+th('followers','Follower')+th('ir','Interazione reel')+th('hook','Hook rate')+(S.city?th('city','Quota a '+esc(S.cityLabel)):'')+'<th class="hide-s">Badge</th><th></th></tr></thead><tbody>'+rows.map(rowHtml).join('')+'</tbody></table>';
+  return '<table><thead><tr><th>Creator</th><th class="hide-s">Paese</th>'+th('followers','Follower')+th('ir','Interazione reel')+th('hook','Hook rate')+(S.city?th('city',esc(S.cityLabel)+' nel pubblico'):'')+'<th class="hide-s">Badge</th><th></th></tr></thead><tbody>'+rows.map(rowHtml).join('')+'</tbody></table>';
 }
 function renderResults(){
   const rows=visibleRows(),n=rows.length;
@@ -574,16 +602,39 @@ $('csvSaved').onclick=()=>download('creator-salvati.csv',csv(Object.values(saved
 /* ---------- scheda creator ---------- */
 function closeDrawer(){$('drawerHost').innerHTML='';if($('vSaved').classList.contains('hidden')===false)renderSaved()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
-function bars(title,items,labeler){
-  if(!items||!items.length)return '';
-  const tot=items.reduce((s,i)=>s+i.v,0)||1;
-  return '<div class="panel"><div class="lbl">'+title+'</div>'+items.slice(0,5).map(i=>{const p=i.v/tot*100;return '<div class="brow"><p><span>'+esc(labeler?labeler(i.k):i.k)+'</span><em>'+p.toFixed(1).replace('.',',')+'%</em></p><span class="trk"><i style="width:'+Math.max(1,p)+'%"></i></span></div>'}).join('')+'</div>';
+const REGION=(()=>{try{return new Intl.DisplayNames(['it'],{type:'region'})}catch(e){return null}})();
+const countryName=k=>{if(REGION&&/^[A-Z]{2}$/.test(k)){try{return REGION.of(k)}catch(e){}}return k};
+// Le percentuali sono sul totale degli account coinvolti quando Meta lo fornisce, altrimenti sulla somma delle voci.
+function shares(items,total){
+  if(!items||!items.length)return [];
+  const sum=items.reduce((s,i)=>s+i.v,0),frac=items.every(i=>i.v<=1);
+  const den=frac?1:((total&&total>=sum?total:sum)||1);
+  return items.map(i=>({k:i.k,p:i.v/den*100}));
 }
-function mediaGrid(title,list){
+function bars(title,items,labeler,total,max){
+  const sh=shares(items,total).slice(0,max||5);if(!sh.length)return '';
+  const top=Math.max(...sh.map(i=>i.p))||1;
+  return '<div class="panel"><div class="lbl">'+title+'</div>'+sh.map(i=>'<div class="brow"><p><span>'+esc(labeler?labeler(i.k):i.k)+'</span><em>'+i.p.toFixed(1).replace('.',',')+'%</em></p><span class="trk"><i style="width:'+Math.max(1,i.p/top*100)+'%"></i></span></div>').join('')+'</div>';
+}
+function mediaGrid(title,list,toggle,n){
   const items=(list&&list.data)||[];if(!items.length)return '';
-  return '<div class="panel"><div class="lbl">'+title+'</div><div class="media">'+items.slice(0,12).map(m=>
-    '<a href="'+esc(m.permalink||m.facebook_permalink||'#')+'" target="_blank" rel="noopener">'+(m.thumbnail_url?'<img src="'+esc(m.thumbnail_url)+'" alt="" loading="lazy">':'')+
-    '<span>'+(m.views!=null?fmtN(m.views)+' views':fmtN(m.likes)+' like')+'</span></a>').join('')+'</div></div>';
+  const kind=m=>/reel|video/i.test((m.product_type||'')+' '+(m.media_type||''))?'reel':'post';
+  return '<div class="panel"><div class="phd"><div class="lbl">'+title+'</div>'+(toggle?'<div class="seg" data-seg><button data-k="" aria-pressed="true">Tutti</button><button data-k="reel" aria-pressed="false">Reel</button><button data-k="post" aria-pressed="false">Post</button></div>':'')+'</div><div class="media">'+items.slice(0,n||12).map(m=>
+    '<a data-t="'+kind(m)+'" href="'+esc(m.permalink||m.facebook_permalink||'#')+'" target="_blank" rel="noopener">'+(m.thumbnail_url?'<img src="'+esc(m.thumbnail_url)+'" alt="" loading="lazy">':'')+
+    '<span>'+[m.views!=null?fmtN(m.views)+' views':'',m.likes!=null?fmtN(m.likes)+' like':'',m.comments!=null?fmtN(m.comments)+' commenti':''].filter(Boolean).slice(0,2).join(' · ')+'</span></a>').join('')+'</div></div>';
+}
+function lineChart(vals){
+  if(!vals||vals.length<2)return '';
+  const W=600,H=120,mx=Math.max(...vals,1);
+  const pts=vals.map((x,i)=>(i/(vals.length-1)*W).toFixed(1)+','+(H-4-(x/mx)*(H-12)).toFixed(1)).join(' ');
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:120px;display:block"><polyline points="'+pts+'" fill="none" stroke="#fff" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg><p class="bigsub">Picco giornaliero '+fmtN(mx)+'</p>';
+}
+async function seriesCall(u,metric){
+  try{
+    const j=await creators({username:u,fields:'insights.metrics('+metric+').period(day).time_range(this_month)'});
+    const d=j.data&&j.data[0]&&j.data[0].insights&&j.data[0].insights.data&&j.data[0].insights.data[0];
+    return ((d&&d.values)||[]).map(x=>Number(x.value)||0);
+  }catch(e){return []}
 }
 async function openDrawer(r){
   if(!r)return;const u=r.username;
@@ -592,19 +643,25 @@ async function openDrawer(r){
   $('scrim').onclick=closeDrawer;$('dx').onclick=closeDrawer;$('dx').focus();
   const safe=async f=>{try{return await f()}catch(e){return null}};
   const one=async fields=>{const j=await creators({username:u,fields});return j.data&&j.data[0]};
-  const base='metrics(creator_engaged_accounts).period(overall).time_range(this_month)';
-  const [prof,m,over,g,a,ag,c,ci,rm,bm]=await Promise.all([
+  const mo='.period(overall).time_range(this_month)';
+  const base='metrics(creator_engaged_accounts)'+mo;
+  const [prof,m,over,g,a,ag,c,ci,rm,bm,ft,mt,daily,ads,sim]=await Promise.all([
     safe(()=>one(LIST_FIELDS+',has_brand_partnership_experience,past_brand_partnership_partners,is_creator_following_brand')),
     loadMetrics(u),
-    insightCall(u,'metrics(creator_engaged_accounts,creator_reach,total_views,account_interactions).period(overall).time_range(this_month)'),
+    insightCall(u,'metrics(creator_engaged_accounts,creator_reach,total_views,account_interactions)'+mo),
     insightCall(u,base+'.breakdown(gender)'),insightCall(u,base+'.breakdown(age)'),insightCall(u,base+'.breakdown(age,gender)'),
     insightCall(u,base+'.breakdown(top_countries)'),loadCities(u),
-    safe(()=>one('recent_media.limit(12)'+MEDIA_SUB)),safe(()=>one('branded_content_media'+MEDIA_SUB))
+    safe(()=>one('recent_media.limit(30)'+MEDIA_SUB)),safe(()=>one('branded_content_media'+MEDIA_SUB)),
+    insightCall(u,'metrics(total_views,account_interactions)'+mo+'.breakdown(follow_type)'),
+    insightCall(u,'metrics(total_views)'+mo+'.breakdown(media_type)'),
+    seriesCall(u,'total_views'),
+    safe(()=>one('past_partnership_ads_media{id,permalink,thumbnail_url,caption,creation_time,media_type,product_type}')),
+    safe(()=>creators({similar_to_creators:JSON.stringify([u]),fields:MIN_FIELDS+',profile_picture_url,is_account_verified',limit:8}))
   ]);
   if(!$('dBody'))return;
   const p={...r,...(prof||{})};const sv=saved[u];
   const partners=Array.isArray(p.past_brand_partnership_partners)?p.past_brand_partnership_partners.map(x=>typeof x==='string'?x:(x.username||x.name||'')).filter(Boolean):[];
-  const K='creator_engaged_accounts__bd';
+  const K='creator_engaged_accounts__bd',eng=over.creator_engaged_accounts;
   const isF=k=>/^(f|female)$/i.test(k), isM=k=>/^(m|male)$/i.test(k);
   const gs=g[K]||[];const gt=gs.reduce((s,i)=>s+i.v,0)||1;
   const fP=Math.round((gs.find(i=>isF(i.k))||{v:0}).v/gt*100), mP=Math.round((gs.find(i=>isM(i.k))||{v:0}).v/gt*100);
@@ -614,24 +671,38 @@ async function openDrawer(r){
   if(!split){for(const i of a[K]||[])ageMap[i.k]={f:i.v,m:0};ageKeys=Object.keys(ageMap)}
   ageKeys.sort((x,y)=>parseInt(x)-parseInt(y));
   const amax=Math.max(1,...ageKeys.map(k=>Math.max(ageMap[k].f,ageMap[k].m)));
-  const agePanel='<div class="panel"><div class="lbl">Età e genere</div>'+((gs.length||ageKeys.length)?
+  const atot=ageKeys.reduce((s,k)=>s+ageMap[k].f+ageMap[k].m,0)||1;
+  const agePanel='<div class="panel"><div class="lbl">Età e genere del pubblico</div>'+((gs.length||ageKeys.length)?
     (gs.length?'<div class="legend"><span style="color:var(--gold)"><i></i>Donne '+fP+'%</span><span style="color:var(--teal)"><i></i>Uomini '+mP+'%</span></div>':'')+
-    (ageKeys.length?'<div class="ages">'+ageKeys.map(k=>'<div><b style="height:'+(ageMap[k].f/amax*100)+'%;background:'+(split?'var(--gold)':'rgba(255,255,255,.7)')+'"></b>'+(split?'<b style="height:'+(ageMap[k].m/amax*100)+'%;background:var(--teal)"></b>':'')+'</div>').join('')+'</div><div class="agel">'+ageKeys.map(k=>'<span>'+esc(k)+'</span>').join('')+'</div>':'')
+    (ageKeys.length?'<div class="ages">'+ageKeys.map(k=>'<div><b style="height:'+(ageMap[k].f/amax*100)+'%;background:'+(split?'var(--gold)':'rgba(255,255,255,.7)')+'"></b>'+(split?'<b style="height:'+(ageMap[k].m/amax*100)+'%;background:var(--teal)"></b>':'')+'</div>').join('')+'</div><div class="agel">'+ageKeys.map(k=>'<span>'+esc(k)+'<br>'+Math.round((ageMap[k].f+ageMap[k].m)/atot*100)+'%</span>').join('')+'</div>':'')
     :'<p class="muted" style="margin:0">Dati sul pubblico non disponibili per questo creator.</p>')+'</div>';
-  const kpi=(l,v)=>'<div class="panel"><div class="lbl">'+l+'</div><p class="kpi">'+v+'</p></div>';
+  const kpi=(l,x)=>'<div class="panel"><div class="lbl">'+l+'</div><p class="kpi">'+x+'</p></div>';
+  const ftRows=(k,lab)=>{const sh=shares(ft[k+'__bd']);return sh.length?'<p class="bigsub" style="margin:0 0 8px;color:#fff">'+lab+'</p>'+sh.map(i=>'<div class="brow"><p><span>'+(/non/i.test(i.k)?'Non follower':'Follower')+'</span><em>'+Math.round(i.p)+'%</em></p><span class="trk"><i style="width:'+Math.max(1,i.p)+'%"></i></span></div>').join(''):''};
+  const ftHtml=ftRows('total_views','Visualizzazioni')+ftRows('account_interactions','Interazioni');
+  const simList=((sim&&sim.data)||[]).filter(x=>x.username&&x.username!==u);const simMap={};simList.forEach(x=>simMap[x.username]=x);
+  const gen=({female:'Donna',male:'Uomo'})[String(p.gender||'').toLowerCase()];
   $('dBody').innerHTML='<div class="igrid">'+
-    '<div class="panel"><div class="phead">'+avatar(p)+'<div><h2>'+esc(u)+(p.is_account_verified?'<span class="ver">verificato</span>':'')+'</h2><p class="sub">'+[p.category,p.country,m.followers!=null?fmtN(m.followers)+' follower':'',AGES[p.age_bucket]].filter(Boolean).map(esc).join(' · ')+'</p><div>'+badges(p)+'</div></div></div>'+
+    '<div class="panel"><div class="phead">'+avatar(p)+'<div><h2>'+esc(u)+(p.is_account_verified?'<span class="ver">verificato</span>':'')+'</h2><p class="sub">'+[p.category,countryName(p.country||''),gen,AGES[p.age_bucket]?AGES[p.age_bucket]+' anni':''].filter(Boolean).map(esc).join(' · ')+'</p><div>'+badges(p)+'</div></div></div>'+
       (p.biography?'<p class="muted" style="margin:14px 0 0;max-width:80ch">'+esc(p.biography)+'</p>':'')+
       '<div class="acts"><a class="btn small" href="https://instagram.com/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">Apri su Instagram</a>'+
       (p.email?'<button class="btn ghost small" id="cpMail">Copia email</button>':'')+
       (p.portfolio_url?'<a class="btn ghost small" href="'+esc(p.portfolio_url)+'" target="_blank" rel="noopener">Portfolio</a>':'')+
       '<button class="btn ghost small" id="dSave">'+(sv?'Rimuovi dai salvati':'Salva')+'</button></div></div>'+
-    '<div class="g2"><div class="panel"><p class="big">'+fmtP(m.ir)+'</p><p class="bigsub">Interazione sui reel, ultimi 90 giorni</p><p class="bigsub">Hook rate '+fmtP(m.hook)+'</p></div>'+agePanel+'</div>'+
-    '<div class="g4">'+kpi('Follower',fmtN(m.followers))+kpi('Account coinvolti',fmtN(over.creator_engaged_accounts))+kpi('Copertura',fmtN(over.creator_reach))+kpi('Visualizzazioni',fmtN(over.total_views))+'</div>'+
-    '<div class="g3">'+bars('Paesi',c[K])+bars('Città',ci)+(partners.length?'<div class="panel"><div class="lbl">Brand partner</div>'+partners.map(x=>'<span class="bdg">'+esc(x)+'</span>').join('')+'</div>':'')+'</div>'+
-    mediaGrid('Contenuti recenti',rm&&rm.recent_media)+mediaGrid('Branded content',bm&&bm.branded_content_media)+
-    '<div class="panel sl'+(sv?'':' hidden')+'" id="slBox"><div class="lbl">Stato e note</div><select id="slStatus">'+STATUSES.map(s=>'<option'+(sv&&sv.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select><textarea id="slNote" placeholder="Note interne: compenso, idee, contatti">'+esc(sv?sv.note:'')+'</textarea></div>'+
+    '<div class="g2"><div class="panel"><p class="big">'+fmtP(m.ir)+'</p><p class="bigsub">Tasso di interazione sui reel, ultimi 90 giorni</p><p class="bigsub">Percentuale di hook '+fmtP(m.hook)+'</p></div>'+agePanel+'</div>'+
+    '<div class="gk">'+kpi('Follower',fmtN(m.followers))+kpi('Interazioni, mese',fmtN(over.account_interactions))+kpi('Visualizzazioni, mese',fmtN(over.total_views))+kpi('Account coinvolti',fmtN(eng))+kpi('Copertura',fmtN(over.creator_reach))+'</div>'+
+    '<div class="g2"><div class="panel"><div class="lbl">Visualizzazioni giornaliere, questo mese</div>'+(lineChart(daily)||'<p class="muted" style="margin:0">Andamento giornaliero non disponibile.</p>')+'</div><div class="panel"><div class="lbl">Follower e non follower</div>'+(ftHtml||'<p class="muted" style="margin:0">Dato non disponibile.</p>')+'</div></div>'+
+    '<div class="g3">'+bars('Paesi principali',c[K],countryName,eng)+bars('Città principali',ci,null,eng)+bars('Visualizzazioni per formato',mt.total_views__bd)+'</div>'+
+    (partners.length?'<div class="panel"><div class="lbl">Brand partner precedenti</div>'+partners.map(x=>'<span class="bdg">'+esc(x)+'</span>').join('')+'</div>':'')+
+    mediaGrid('Inserzioni in partnership',ads&&ads.past_partnership_ads_media,false,12)+
+    mediaGrid('Contenuti recenti',rm&&rm.recent_media,true,18)+mediaGrid('Branded content',bm&&bm.branded_content_media,false,12)+
+    (simList.length?'<div class="panel"><div class="lbl">Creator con un pubblico simile</div><div class="sims">'+simList.map(x=>'<button class="sim" data-sim="'+esc(x.username)+'">'+avatar(x)+'<span>'+esc(x.username)+'</span></button>').join('')+'</div></div>':'')+
+    '<div class="panel sl'+(sv?'':' hidden')+'" id="slBox"><div class="lbl">Stato e note</div><select id="slStatus">'+STATUSES.map(x=>'<option'+(sv&&sv.status===x?' selected':'')+'>'+x+'</option>').join('')+'</select><textarea id="slNote" placeholder="Note interne: compenso, idee, contatti">'+esc(sv?sv.note:'')+'</textarea></div>'+
     '</div>';
+  $('dBody').onclick=e=>{
+    const b=e.target.closest('[data-seg] button');
+    if(b){const seg=b.parentNode;seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));seg.closest('.panel').querySelectorAll('.media a').forEach(x=>x.classList.toggle('hidden',!!b.dataset.k&&x.dataset.t!==b.dataset.k));return}
+    const si=e.target.closest('[data-sim]');if(si)openDrawer(simMap[si.dataset.sim]);
+  };
   const mail=$('cpMail');if(mail)mail.onclick=async()=>{try{await navigator.clipboard.writeText(p.email);mail.textContent='Email copiata'}catch(e){}};
   $('dSave').onclick=()=>{toggleSave(p);const on=!!saved[u];$('dSave').textContent=on?'Rimuovi dai salvati':'Salva';$('slBox').classList.toggle('hidden',!on);
     document.querySelectorAll('[data-save="'+CSS.escape(u)+'"]').forEach(b=>b.textContent=on?'Salvato':'Salva')};
